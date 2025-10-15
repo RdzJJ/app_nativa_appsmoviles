@@ -92,3 +92,5 @@ lint/reports/
 .idea/**/build/
 *.orig
 *.rej
+/.idea/
+/.kotlin/
