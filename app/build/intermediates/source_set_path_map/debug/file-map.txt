@@ -1,0 +1,66 @@
+com.habitsapp-work-runtime-2.9.0-0 C:\Users\Julián\.gradle\caches\transforms-3\06d2c4f8137cd796a379081c2e076dd8\transformed\work-runtime-2.9.0\res
+com.habitsapp-ui-unit-release-1 C:\Users\Julián\.gradle\caches\transforms-3\0f4719109d87321904668c3e5b43ae4a\transformed\ui-unit-release\res
+com.habitsapp-runtime-saveable-release-2 C:\Users\Julián\.gradle\caches\transforms-3\10cae580d4cbf5d366840a5aee18b492\transformed\runtime-saveable-release\res
+com.habitsapp-customview-poolingcontainer-1.0.0-3 C:\Users\Julián\.gradle\caches\transforms-3\1270fe3fe9b7c41be1ce4448ea39e0e7\transformed\customview-poolingcontainer-1.0.0\res
+com.habitsapp-lifecycle-runtime-ktx-2.7.0-4 C:\Users\Julián\.gradle\caches\transforms-3\20045e5aa919043a2bc2bb4c8b494d24\transformed\lifecycle-runtime-ktx-2.7.0\res
+com.habitsapp-room-ktx-2.6.1-5 C:\Users\Julián\.gradle\caches\transforms-3\208e1db720163f62a28bf6aab50e18e5\transformed\room-ktx-2.6.1\res
+com.habitsapp-ui-geometry-release-6 C:\Users\Julián\.gradle\caches\transforms-3\28f2365aec56a48ca8c7d007cc0cae26\transformed\ui-geometry-release\res
+com.habitsapp-savedstate-1.2.1-7 C:\Users\Julián\.gradle\caches\transforms-3\3047d23902683cad4ff5f44faa5d9220\transformed\savedstate-1.2.1\res
+com.habitsapp-material3-release-8 C:\Users\Julián\.gradle\caches\transforms-3\364afdf3e979b808746dd268cbbf11e5\transformed\material3-release\res
+com.habitsapp-animation-release-9 C:\Users\Julián\.gradle\caches\transforms-3\37a75a0813ba61c79ee322140d1e3d9c\transformed\animation-release\res
+com.habitsapp-room-runtime-2.6.1-10 C:\Users\Julián\.gradle\caches\transforms-3\3ef53e3fc328a595ab11c18d3689b811\transformed\room-runtime-2.6.1\res
+com.habitsapp-navigation-compose-2.7.5-11 C:\Users\Julián\.gradle\caches\transforms-3\40663d3bde05aec92831ac53073be2c3\transformed\navigation-compose-2.7.5\res
+com.habitsapp-ui-tooling-preview-release-12 C:\Users\Julián\.gradle\caches\transforms-3\41518a8d7aa5e6fb37e1d81b7d0f254e\transformed\ui-tooling-preview-release\res
+com.habitsapp-foundation-layout-release-13 C:\Users\Julián\.gradle\caches\transforms-3\4344a4fa93c3d31857d9f085418057af\transformed\foundation-layout-release\res
+com.habitsapp-lifecycle-livedata-core-2.7.0-14 C:\Users\Julián\.gradle\caches\transforms-3\4375a9743d453e75b49600247f904bde\transformed\lifecycle-livedata-core-2.7.0\res
+com.habitsapp-lifecycle-livedata-core-ktx-2.7.0-15 C:\Users\Julián\.gradle\caches\transforms-3\4ed75cdf41a92d6d07b98602184bbf50\transformed\lifecycle-livedata-core-ktx-2.7.0\res
+com.habitsapp-profileinstaller-1.3.0-16 C:\Users\Julián\.gradle\caches\transforms-3\50091910b3d43cef1f7d9992d6a4c8f3\transformed\profileinstaller-1.3.0\res
+com.habitsapp-ui-tooling-data-release-17 C:\Users\Julián\.gradle\caches\transforms-3\55fa45e12b53df18b4f44385c2966eb0\transformed\ui-tooling-data-release\res
+com.habitsapp-navigation-common-2.7.5-18 C:\Users\Julián\.gradle\caches\transforms-3\575b0cfe16e02a83b91e175d274ac969\transformed\navigation-common-2.7.5\res
+com.habitsapp-annotation-experimental-1.4.0-19 C:\Users\Julián\.gradle\caches\transforms-3\57a6293cc8653efe1cdb1bf7e50553af\transformed\annotation-experimental-1.4.0\res
+com.habitsapp-navigation-common-ktx-2.7.5-20 C:\Users\Julián\.gradle\caches\transforms-3\5c65f12d5d46f8fe1bf5fcf8d26291d6\transformed\navigation-common-ktx-2.7.5\res
+com.habitsapp-ui-text-release-21 C:\Users\Julián\.gradle\caches\transforms-3\6a398953182851b1c2b330f37fae282e\transformed\ui-text-release\res
+com.habitsapp-ui-release-22 C:\Users\Julián\.gradle\caches\transforms-3\6ab63d4212a808061b706e519d35aead\transformed\ui-release\res
+com.habitsapp-ui-util-release-23 C:\Users\Julián\.gradle\caches\transforms-3\6de57df329aa705bacead2af32f2f6ee\transformed\ui-util-release\res
+com.habitsapp-lifecycle-viewmodel-2.7.0-24 C:\Users\Julián\.gradle\caches\transforms-3\6e21cb8d4b78fa8411c9b1410f9f60c9\transformed\lifecycle-viewmodel-2.7.0\res
+com.habitsapp-navigation-runtime-ktx-2.7.5-25 C:\Users\Julián\.gradle\caches\transforms-3\75f4168769c03d077f34ca160eaaa234\transformed\navigation-runtime-ktx-2.7.5\res
+com.habitsapp-activity-compose-1.8.2-26 C:\Users\Julián\.gradle\caches\transforms-3\784c9025ef7068a9323df99c644484dc\transformed\activity-compose-1.8.2\res
+com.habitsapp-emoji2-1.3.0-27 C:\Users\Julián\.gradle\caches\transforms-3\7afa326e74231bf842c860791bb21f2c\transformed\emoji2-1.3.0\res
+com.habitsapp-lifecycle-viewmodel-ktx-2.7.0-28 C:\Users\Julián\.gradle\caches\transforms-3\7d66bf060fbc91b83306478ff834fccd\transformed\lifecycle-viewmodel-ktx-2.7.0\res
+com.habitsapp-datetime-0.9.0-29 C:\Users\Julián\.gradle\caches\transforms-3\7e4b9fb1dcc6b2002843e2d8306cc4d8\transformed\datetime-0.9.0\res
+com.habitsapp-core-ktx-1.12.0-30 C:\Users\Julián\.gradle\caches\transforms-3\818c4530a579a5c61f1f2bb6665a7b7a\transformed\core-ktx-1.12.0\res
+com.habitsapp-lifecycle-service-2.7.0-31 C:\Users\Julián\.gradle\caches\transforms-3\83fbbd95895a7787b35708ad46a45e4e\transformed\lifecycle-service-2.7.0\res
+com.habitsapp-animation-core-release-32 C:\Users\Julián\.gradle\caches\transforms-3\8d0eed9d19fff9138895040b168e30de\transformed\animation-core-release\res
+com.habitsapp-material-icons-core-release-33 C:\Users\Julián\.gradle\caches\transforms-3\995644a0ba64d68fa00e71b3ddab1663\transformed\material-icons-core-release\res
+com.habitsapp-foundation-release-34 C:\Users\Julián\.gradle\caches\transforms-3\9b696069fb3af9ab28de319fb483231a\transformed\foundation-release\res
+com.habitsapp-sqlite-framework-2.4.0-35 C:\Users\Julián\.gradle\caches\transforms-3\9bd42dd9753a25159c142a937ca780ff\transformed\sqlite-framework-2.4.0\res
+com.habitsapp-sqlite-2.4.0-36 C:\Users\Julián\.gradle\caches\transforms-3\9e3e277003b7f9fc9620ff5dc76436ae\transformed\sqlite-2.4.0\res
+com.habitsapp-core-1.12.0-37 C:\Users\Julián\.gradle\caches\transforms-3\a29242cc2f6bbf0e4652127f1385413d\transformed\core-1.12.0\res
+com.habitsapp-lifecycle-runtime-2.7.0-38 C:\Users\Julián\.gradle\caches\transforms-3\a5b0a0ee6eb3582d9c7773741ddc1789\transformed\lifecycle-runtime-2.7.0\res
+com.habitsapp-navigation-runtime-2.7.5-39 C:\Users\Julián\.gradle\caches\transforms-3\a7735e8f38afdfb063f0f28e0e496ca9\transformed\navigation-runtime-2.7.5\res
+com.habitsapp-lifecycle-livedata-2.7.0-40 C:\Users\Julián\.gradle\caches\transforms-3\a872f01d6cbff9d0f9124c8a18b5e87d\transformed\lifecycle-livedata-2.7.0\res
+com.habitsapp-startup-runtime-1.1.1-41 C:\Users\Julián\.gradle\caches\transforms-3\ac6f04492546e2fd6a0371462dc1c175\transformed\startup-runtime-1.1.1\res
+com.habitsapp-activity-1.8.2-42 C:\Users\Julián\.gradle\caches\transforms-3\af24e97216f8a5acb29aef2e46cfa8f0\transformed\activity-1.8.2\res
+com.habitsapp-material-ripple-release-43 C:\Users\Julián\.gradle\caches\transforms-3\b89c41fbe12ecba89e3f4e2c50b23705\transformed\material-ripple-release\res
+com.habitsapp-runtime-release-44 C:\Users\Julián\.gradle\caches\transforms-3\c0cf8e61b6a8f9d7761273bee9a98997\transformed\runtime-release\res
+com.habitsapp-work-runtime-ktx-2.9.0-45 C:\Users\Julián\.gradle\caches\transforms-3\c0f5f57dc7333b8a9d7dcf3ce59a63c4\transformed\work-runtime-ktx-2.9.0\res
+com.habitsapp-ui-test-manifest-1.6.1-46 C:\Users\Julián\.gradle\caches\transforms-3\c25866de0bb0066232bc63a2fb1d7c3c\transformed\ui-test-manifest-1.6.1\res
+com.habitsapp-ui-tooling-release-47 C:\Users\Julián\.gradle\caches\transforms-3\c44564f69e7240248d6bf609e2593417\transformed\ui-tooling-release\res
+com.habitsapp-material-release-48 C:\Users\Julián\.gradle\caches\transforms-3\cdcc0b51532f2a829831ab4821f8bc90\transformed\material-release\res
+com.habitsapp-hilt-navigation-compose-1.1.0-49 C:\Users\Julián\.gradle\caches\transforms-3\ce05c9bc994e153bae60b398cb8774a6\transformed\hilt-navigation-compose-1.1.0\res
+com.habitsapp-fragment-1.5.1-50 C:\Users\Julián\.gradle\caches\transforms-3\ce1754363b25780bfdf210164933dee1\transformed\fragment-1.5.1\res
+com.habitsapp-core-runtime-2.2.0-51 C:\Users\Julián\.gradle\caches\transforms-3\d28d6dd8881cba2a484efe94785b558e\transformed\core-runtime-2.2.0\res
+com.habitsapp-lifecycle-viewmodel-compose-2.7.0-52 C:\Users\Julián\.gradle\caches\transforms-3\d6805ff16adbfd232fa0e1aa0614edea\transformed\lifecycle-viewmodel-compose-2.7.0\res
+com.habitsapp-ui-graphics-release-53 C:\Users\Julián\.gradle\caches\transforms-3\dc99d5c045182c81a4d2e8554dd12eda\transformed\ui-graphics-release\res
+com.habitsapp-hilt-navigation-1.1.0-54 C:\Users\Julián\.gradle\caches\transforms-3\e1f9ce1ba39caea081077b7278047bed\transformed\hilt-navigation-1.1.0\res
+com.habitsapp-activity-ktx-1.8.2-55 C:\Users\Julián\.gradle\caches\transforms-3\ee2101283e5a3908eb7842508d78b2c8\transformed\activity-ktx-1.8.2\res
+com.habitsapp-lifecycle-process-2.7.0-56 C:\Users\Julián\.gradle\caches\transforms-3\f42334a9e20e8dd9628bce3942e099c5\transformed\lifecycle-process-2.7.0\res
+com.habitsapp-hilt-work-1.1.0-57 C:\Users\Julián\.gradle\caches\transforms-3\f696f5619cdf516c6408df20e8a3f3a4\transformed\hilt-work-1.1.0\res
+com.habitsapp-lifecycle-viewmodel-savedstate-2.7.0-58 C:\Users\Julián\.gradle\caches\transforms-3\f9dd675c64f1b39bd6cfd658eda0df88\transformed\lifecycle-viewmodel-savedstate-2.7.0\res
+com.habitsapp-savedstate-ktx-1.2.1-59 C:\Users\Julián\.gradle\caches\transforms-3\fddb0faa3ef62605f3534b71884f0b19\transformed\savedstate-ktx-1.2.1\res
+com.habitsapp-resValues-60 D:\Universidad\Octavo Semestre\AplicacionesMoviles\app_nativa_appsmoviles\app\build\generated\res\resValues\debug
+com.habitsapp-packageDebugResources-61 D:\Universidad\Octavo Semestre\AplicacionesMoviles\app_nativa_appsmoviles\app\build\intermediates\incremental\debug\packageDebugResources\merged.dir
+com.habitsapp-packageDebugResources-62 D:\Universidad\Octavo Semestre\AplicacionesMoviles\app_nativa_appsmoviles\app\build\intermediates\incremental\debug\packageDebugResources\stripped.dir
+com.habitsapp-merged_res-63 D:\Universidad\Octavo Semestre\AplicacionesMoviles\app_nativa_appsmoviles\app\build\intermediates\merged_res\debug
+com.habitsapp-debug-64 D:\Universidad\Octavo Semestre\AplicacionesMoviles\app_nativa_appsmoviles\app\src\debug\res
+com.habitsapp-main-65 D:\Universidad\Octavo Semestre\AplicacionesMoviles\app_nativa_appsmoviles\app\src\main\res

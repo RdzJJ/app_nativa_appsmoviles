@@ -1,0 +1,51 @@
+<resources>
+    <string name="app_name">HabitsApp</string>
+    
+    <!-- Navigation -->
+    <string name="nav_habits">Hábitos</string>
+    <string name="nav_statistics">Estadísticas</string>
+    <string name="nav_settings">Configuración</string>
+    
+    <!-- Habits -->
+    <string name="habits_title">Mis Hábitos</string>
+    <string name="add_habit">Agregar Hábito</string>
+    <string name="edit_habit">Editar Hábito</string>
+    <string name="delete_habit">Eliminar Hábito</string>
+    <string name="habit_name">Nombre del hábito</string>
+    <string name="habit_description">Descripción</string>
+    <string name="habit_frequency">Frecuencia</string>
+    <string name="habit_reminder">Recordatorio</string>
+    <string name="save_habit">Guardar</string>
+    <string name="cancel">Cancelar</string>
+    
+    <!-- Frequency -->
+    <string name="frequency_daily">Diario</string>
+    <string name="frequency_weekly">Semanal</string>
+    <string name="frequency_monthly">Mensual</string>
+    <string name="frequency_hourly">Cada hora</string>
+    
+    <!-- Statistics -->
+    <string name="statistics_title">Estadísticas</string>
+    <string name="total_habits">Total de hábitos</string>
+    <string name="completed_today">Completados hoy</string>
+    <string name="streak">Racha actual</string>
+    <string name="completion_rate">Tasa de cumplimiento</string>
+    
+    <!-- Common -->
+    <string name="yes">Sí</string>
+    <string name="no">No</string>
+    <string name="ok">OK</string>
+    <string name="delete">Eliminar</string>
+    <string name="edit">Editar</string>
+    <string name="mark_completed">Marcar como completado</string>
+    <string name="mark_incomplete">Marcar como incompleto</string>
+    
+    <!-- Messages -->
+    <string name="habit_created">Hábito creado exitosamente</string>
+    <string name="habit_updated">Hábito actualizado exitosamente</string>
+    <string name="habit_deleted">Hábito eliminado</string>
+    <string name="confirm_delete">¿Estás seguro de que quieres eliminar este hábito?</string>
+    <string name="no_habits">No tienes hábitos creados aún</string>
+    <string name="create_first_habit">Crea tu primer hábito para comenzar</string>
+</resources>
+
