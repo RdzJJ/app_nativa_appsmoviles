@@ -3,6 +3,7 @@ package com.habitsapp.ui.components
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -31,6 +32,7 @@ enum class BottomNavItem(
     val icon: ImageVector
 ) {
     HABITS("Hábitos", Icons.Default.Home),
-    STATISTICS("Estadísticas", Icons.Default.Info)
+    STATISTICS("Estadísticas", Icons.Default.Info),
+    PROFILE("Perfil", Icons.Default.Person)
 }
 

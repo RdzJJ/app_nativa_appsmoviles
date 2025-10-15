@@ -4,30 +4,42 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.habitsapp.ui.screens.habits.HabitsScreen
-import com.habitsapp.ui.screens.statistics.StatisticsScreen
+import com.habitsapp.ui.screens.home.HomeScreen
 import com.habitsapp.ui.screens.addhabit.AddHabitScreen
 import com.habitsapp.ui.screens.edithabit.EditHabitScreen
+import com.habitsapp.ui.screens.auth.LoginScreen
 
 @Composable
 fun HabitsNavigation(navController: NavHostController) {
     NavHost(
         navController = navController,
-        startDestination = Screen.Habits.route
+        startDestination = Screen.Login.route
     ) {
+        composable(Screen.Login.route) {
+            LoginScreen(
+                onLoginSuccess = {
+                    navController.navigate(Screen.Habits.route) {
+                        popUpTo(Screen.Login.route) { inclusive = true }
+                    }
+                }
+            )
+        }
+        
         composable(Screen.Habits.route) {
-            HabitsScreen(
+            HomeScreen(
+                navController = navController,
                 onNavigateToAddHabit = {
                     navController.navigate(Screen.AddHabit.route)
                 },
                 onNavigateToEditHabit = { habitId ->
                     navController.navigate(Screen.EditHabit.createRoute(habitId))
+                },
+                onLogout = {
+                    navController.navigate(Screen.Login.route) {
+                        popUpTo(Screen.Habits.route) { inclusive = true }
+                    }
                 }
             )
-        }
-        
-        composable(Screen.Statistics.route) {
-            StatisticsScreen()
         }
         
         composable(Screen.AddHabit.route) {

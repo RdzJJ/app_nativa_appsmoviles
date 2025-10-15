@@ -2,15 +2,22 @@ package com.habitsapp.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-// Colores principales
-val Purple80 = Color(0xFFD0BCFF)
-val PurpleGrey80 = Color(0xFFCCC2DC)
-val Pink80 = Color(0xFFEFB8C8)
+// New Vita Habitos Color Palette - Blue to Green
+val VitaDarkPurple = Color(0xFF19183B)    // Primary - Dark Purple
+val VitaGrey = Color(0xFF708993)          // Secondary - Slate Grey
+val VitaGreen = Color(0xFFA1C2BD)         // Tertiary - Soft Green
+val VitaLight = Color(0xFFE7F2EF)         // Background - Very Light Cyan
 
-val Purple40 = Color(0xFF6650a4)
-val PurpleGrey40 = Color(0xFF625b71)
-val Pink40 = Color(0xFF7D5260)
+// Complementary colors for UI elements
+val VitaGreenLight = Color(0xFFD4E8E4)    // Lighter green for surfaces
+val VitaDarkText = Color(0xFF1A1A2E)      // Dark text
+val VitaWhite = Color(0xFFFFFFFF)         // White
 
-// Colores personalizados para hábitos
-val HabitCompleted = Color(0xFF4CAF50) // Verde
-val HabitPending = Color(0xFF9E9E9E) // Gris
+// Status colors
+val HabitCompleted = Color(0xFF4CAF50)    // Green
+val HabitPending = Color(0xFF9E9E9E)      // Grey
+val HabitMissed = Color(0xFFE74C3C)       // Red
+val StreakGold = Color(0xFFFFD700)        // Gold
+val Success = Color(0xFF66BB6A)           // Success green
+val Error = Color(0xFFEF5350)             // Error red
+val Warning = Color(0xFFFFA726)           // Warning orange

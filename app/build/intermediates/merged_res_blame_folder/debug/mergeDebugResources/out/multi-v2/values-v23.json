@@ -4,7 +4,7 @@
             "outputFile": "com.habitsapp-mergeDebugResources-50:/values-v23/values-v23.xml",
             "map": [
                 {
-                    "source": "C:\\Users\\Julián\\.gradle\\caches\\8.14.3\\transforms\\fc44dc2d8ec26a5f42508a60dd0b86ac\\transformed\\work-runtime-2.10.5\\res\\values-v23\\values-v23.xml",
+                    "source": "C:\\Users\\samue\\.gradle\\caches\\8.14.3\\transforms\\fc44dc2d8ec26a5f42508a60dd0b86ac\\transformed\\work-runtime-2.10.5\\res\\values-v23\\values-v23.xml",
                     "from": {
                         "startLines": "2,3",
                         "startColumns": "4,4",

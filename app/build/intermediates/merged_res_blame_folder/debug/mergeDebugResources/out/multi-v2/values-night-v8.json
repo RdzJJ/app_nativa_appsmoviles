@@ -4,7 +4,7 @@
             "outputFile": "com.habitsapp-mergeDebugResources-50:/values-night-v8/values-night-v8.xml",
             "map": [
                 {
-                    "source": "D:\\Universidad\\Octavo Semestre\\AplicacionesMoviles\\app_nativa_appsmoviles\\app\\src\\main\\res\\values-night\\colors.xml",
+                    "source": "C:\\Users\\samue\\Downloads\\app_nativa_appsmoviles\\app\\src\\main\\res\\values-night\\colors.xml",
                     "from": {
                         "startLines": "19,14,16,26,27,25,20,15,17,3,5,7,9,22,24,11,13,18,2,4,6,8,21,23,10,12",
                         "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4",
@@ -21,14 +21,14 @@
                     }
                 },
                 {
-                    "source": "D:\\Universidad\\Octavo Semestre\\AplicacionesMoviles\\app_nativa_appsmoviles\\app\\src\\main\\res\\values-night\\themes.xml",
+                    "source": "C:\\Users\\samue\\Downloads\\app_nativa_appsmoviles\\app\\src\\main\\res\\values-night\\themes.xml",
                     "from": {
                         "startLines": "3,13",
                         "startColumns": "4,4",
-                        "startOffsets": "139,770",
+                        "startOffsets": "142,783",
                         "endLines": "11,13",
                         "endColumns": "12,66",
-                        "endOffsets": "764,832"
+                        "endOffsets": "775,845"
                     },
                     "to": {
                         "startLines": "28,37",

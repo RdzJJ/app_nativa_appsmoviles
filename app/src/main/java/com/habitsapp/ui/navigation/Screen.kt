@@ -8,8 +8,10 @@ sealed class Screen(
     val route: String,
     val arguments: List<NamedNavArgument> = emptyList()
 ) {
+    object Login : Screen("login")
     object Habits : Screen("habits")
     object Statistics : Screen("statistics")
+    object Profile : Screen("profile")
     object AddHabit : Screen("add_habit")
     object EditHabit : Screen(
         route = "edit_habit/{habitId}",

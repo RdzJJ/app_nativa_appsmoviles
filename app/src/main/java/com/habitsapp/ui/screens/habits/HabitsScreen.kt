@@ -13,7 +13,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.habitsapp.ui.components.HabitCard
-import com.habitsapp.ui.components.HabitsBottomNavigation
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -26,7 +25,6 @@ fun HabitsScreen(
     val isLoading by viewModel.isLoading.collectAsState()
     val error by viewModel.error.collectAsState()
 
-    var selectedTab by remember { mutableIntStateOf(0) }
     val snackbarHostState = remember { SnackbarHostState() }
 
     LaunchedEffect(error) {
@@ -52,12 +50,6 @@ fun HabitsScreen(
             ) {
                 Icon(Icons.Default.Add, contentDescription = "Agregar hábito")
             }
-        },
-        bottomBar = {
-            HabitsBottomNavigation(
-                selectedTab = selectedTab,
-                onTabSelected = { selectedTab = it }
-            )
         }
     ) { paddingValues ->
         Box(
