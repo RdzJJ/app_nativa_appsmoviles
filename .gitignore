@@ -1,0 +1,94 @@
+# =============================================
+# Android / Kotlin / Gradle / Android Studio
+# =============================================
+
+# Gradle build files / caches
+.gradle/
+**/build/
+!gradle-wrapper.jar
+
+# Local configuration (SDK path etc)
+local.properties
+
+# Kotlin / Java compiled files
+*.class
+*.jar
+*.war
+*.ear
+
+# Android artifacts
+*.apk
+*.ap_
+*.aab
+*.dex
+*.class
+*.so
+
+# Generated files / folders
+bin/
+gen/
+out/
+captures/
+.navigation/
+*.log
+
+# Android Studio / IntelliJ
+*.iml
+*.ipr
+*.iws
+.idea/
+.idea/caches/
+.idea/libraries/
+.idea/workspace.xml
+.idea/modules.xml
+.idea/gradle.xml
+.idea/navEditor.xml
+.idea/.name
+.idea/dictionaries/
+.idea/tasks.xml
+.idea/assetWizardSettings.xml
+
+# Keystore / signing files (opcional, no versionar claves privadas)
+*.jks
+*.keystore
+keystore.properties
+
+# External native builds / NDK / C++ / CMake
+.externalNativeBuild/
+.cxx/
+obj/
+
+# Google Services / Firebase config (si no deseas compartirlo)
+# google-services.json
+
+# ProGuard / R8
+proguard/
+proguard-rules.pro
+
+# Fastlane / Android Publish
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots/
+fastlane/test_output/
+fastlane/readme.md
+
+# OS‐specific / Misc
+.DS_Store
+Thumbs.db
+ehthumbs.db
+*.swp
+*~
+
+# Lint
+lint/intermediates/
+lint/generated/
+lint/outputs/
+lint/tmp/
+lint/reports/
+
+# ================================
+# Git housekeeping
+# ================================
+.idea/**/build/
+*.orig
+*.rej
