@@ -3,10 +3,10 @@ package com.habitsapp.ui.screens.addhabit;
 import com.habitsapp.data.repository.HabitRepository;
 import dagger.internal.DaggerGenerated;
 import dagger.internal.Factory;
+import dagger.internal.Provider;
 import dagger.internal.QualifierMetadata;
 import dagger.internal.ScopeMetadata;
 import javax.annotation.processing.Generated;
-import javax.inject.Provider;
 
 @ScopeMetadata
 @QualifierMetadata
@@ -19,12 +19,15 @@ import javax.inject.Provider;
     "unchecked",
     "rawtypes",
     "KotlinInternal",
-    "KotlinInternalInJava"
+    "KotlinInternalInJava",
+    "cast",
+    "deprecation",
+    "nullness:initialization.field.uninitialized"
 })
 public final class AddHabitViewModel_Factory implements Factory<AddHabitViewModel> {
   private final Provider<HabitRepository> repositoryProvider;
 
-  public AddHabitViewModel_Factory(Provider<HabitRepository> repositoryProvider) {
+  private AddHabitViewModel_Factory(Provider<HabitRepository> repositoryProvider) {
     this.repositoryProvider = repositoryProvider;
   }
 

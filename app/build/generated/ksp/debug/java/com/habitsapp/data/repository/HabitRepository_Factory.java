@@ -3,10 +3,10 @@ package com.habitsapp.data.repository;
 import com.habitsapp.data.database.HabitDao;
 import dagger.internal.DaggerGenerated;
 import dagger.internal.Factory;
+import dagger.internal.Provider;
 import dagger.internal.QualifierMetadata;
 import dagger.internal.ScopeMetadata;
 import javax.annotation.processing.Generated;
-import javax.inject.Provider;
 
 @ScopeMetadata("javax.inject.Singleton")
 @QualifierMetadata
@@ -19,12 +19,15 @@ import javax.inject.Provider;
     "unchecked",
     "rawtypes",
     "KotlinInternal",
-    "KotlinInternalInJava"
+    "KotlinInternalInJava",
+    "cast",
+    "deprecation",
+    "nullness:initialization.field.uninitialized"
 })
 public final class HabitRepository_Factory implements Factory<HabitRepository> {
   private final Provider<HabitDao> habitDaoProvider;
 
-  public HabitRepository_Factory(Provider<HabitDao> habitDaoProvider) {
+  private HabitRepository_Factory(Provider<HabitDao> habitDaoProvider) {
     this.habitDaoProvider = habitDaoProvider;
   }
 

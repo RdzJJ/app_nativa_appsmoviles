@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "com.habitsapp-mergeDebugResources-62:/values-night-v8/values-night-v8.xml",
+            "outputFile": "com.habitsapp-mergeDebugResources-50:/values-night-v8/values-night-v8.xml",
             "map": [
                 {
                     "source": "D:\\Universidad\\Octavo Semestre\\AplicacionesMoviles\\app_nativa_appsmoviles\\app\\src\\main\\res\\values-night\\colors.xml",
@@ -25,10 +25,10 @@
                     "from": {
                         "startLines": "3,13",
                         "startColumns": "4,4",
-                        "startOffsets": "142,783",
+                        "startOffsets": "139,770",
                         "endLines": "11,13",
                         "endColumns": "12,66",
-                        "endOffsets": "775,845"
+                        "endOffsets": "764,832"
                     },
                     "to": {
                         "startLines": "28,37",

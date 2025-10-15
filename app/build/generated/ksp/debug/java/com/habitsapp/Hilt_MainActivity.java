@@ -1,11 +1,14 @@
 package com.habitsapp;
 
 import android.content.Context;
+import android.os.Bundle;
 import androidx.activity.ComponentActivity;
 import androidx.activity.contextaware.OnContextAvailableListener;
+import androidx.annotation.CallSuper;
 import androidx.lifecycle.ViewModelProvider;
 import dagger.hilt.android.internal.lifecycle.DefaultViewModelFactories;
 import dagger.hilt.android.internal.managers.ActivityComponentManager;
+import dagger.hilt.android.internal.managers.SavedStateHandleHolder;
 import dagger.hilt.internal.GeneratedComponentManagerHolder;
 import dagger.hilt.internal.UnsafeCasts;
 import java.lang.Object;
@@ -17,6 +20,8 @@ import javax.annotation.processing.Generated;
  */
 @Generated("dagger.hilt.android.processor.internal.androidentrypoint.ActivityGenerator")
 public abstract class Hilt_MainActivity extends ComponentActivity implements GeneratedComponentManagerHolder {
+  private SavedStateHandleHolder savedStateHandleHolder;
+
   private volatile ActivityComponentManager componentManager;
 
   private final Object componentManagerLock = new Object();
@@ -28,8 +33,8 @@ public abstract class Hilt_MainActivity extends ComponentActivity implements Gen
     _initHiltInternal();
   }
 
-  Hilt_MainActivity(int p0) {
-    super(p0);
+  Hilt_MainActivity(int contentLayoutId) {
+    super(contentLayoutId);
     _initHiltInternal();
   }
 
@@ -40,6 +45,28 @@ public abstract class Hilt_MainActivity extends ComponentActivity implements Gen
         inject();
       }
     });
+  }
+
+  private void initSavedStateHandleHolder() {
+    savedStateHandleHolder = componentManager().getSavedStateHandleHolder();
+    if (savedStateHandleHolder.isInvalid()) {
+      savedStateHandleHolder.setExtras(getDefaultViewModelCreationExtras());
+    }
+  }
+
+  @CallSuper
+  @Override
+  protected void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    initSavedStateHandleHolder();
+  }
+
+  @Override
+  protected void onDestroy() {
+    super.onDestroy();
+    if (savedStateHandleHolder != null) {
+      savedStateHandleHolder.clear();
+    }
   }
 
   @Override

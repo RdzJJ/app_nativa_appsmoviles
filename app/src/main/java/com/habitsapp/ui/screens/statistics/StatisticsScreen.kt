@@ -2,7 +2,6 @@ package com.habitsapp.ui.screens.statistics
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -13,16 +12,20 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.habitsapp.ui.components.StatCard
 import com.habitsapp.ui.components.HabitsBottomNavigation
 import com.habitsapp.ui.components.SimpleBarChart
+import com.habitsapp.ui.viewmodel.StatisticsViewModel
+import com.habitsapp.ui.viewmodel.StatisticsData
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun StatisticsScreen(
     viewModel: StatisticsViewModel = hiltViewModel()
 ) {
-    val statistics by viewModel.statistics.collectAsState()
-    val isLoading by viewModel.isLoading.collectAsState()
+    // Usa el tipo correcto y valor inicial
+    val statistics by viewModel.statistics.collectAsState(initial = StatisticsData())
+    val isLoading by viewModel.isLoading.collectAsState(initial = false)
+
     var selectedTab by remember { mutableIntStateOf(1) }
-    
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -58,7 +61,7 @@ fun StatisticsScreen(
                         fontWeight = FontWeight.Bold
                     )
                 }
-                
+
                 item {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -76,7 +79,7 @@ fun StatisticsScreen(
                         )
                     }
                 }
-                
+
                 item {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -94,7 +97,7 @@ fun StatisticsScreen(
                         )
                     }
                 }
-                
+
                 item {
                     StatCard(
                         title = "Tasa de Cumplimiento Promedio",
@@ -102,7 +105,7 @@ fun StatisticsScreen(
                         modifier = Modifier.fillMaxWidth()
                     )
                 }
-                
+
                 item {
                     Text(
                         text = "Progreso de Hábitos",
@@ -111,8 +114,7 @@ fun StatisticsScreen(
                         modifier = Modifier.padding(top = 16.dp)
                     )
                 }
-                
-                // Simple charts using our custom components
+
                 item {
                     Card(
                         modifier = Modifier.fillMaxWidth()
@@ -125,16 +127,15 @@ fun StatisticsScreen(
                                 style = MaterialTheme.typography.titleMedium
                             )
                             Spacer(modifier = Modifier.height(16.dp))
-                            
-                            // Simple bar chart showing weekly progress
+
                             SimpleBarChart(
-                                data = listOf(5f, 7f, 6f, 8f, 9f, 7f, 6f), // Example data
+                                data = listOf(5f, 7f, 6f, 8f, 9f, 7f, 6f),
                                 labels = listOf("L", "M", "X", "J", "V", "S", "D"),
                                 modifier = Modifier.fillMaxWidth()
                             )
-                            
+
                             Spacer(modifier = Modifier.height(16.dp))
-                            
+
                             Text(
                                 text = "Progreso semanal (ejemplo)",
                                 style = MaterialTheme.typography.bodySmall,
@@ -147,4 +148,3 @@ fun StatisticsScreen(
         }
     }
 }
-

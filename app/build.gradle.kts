@@ -77,6 +77,10 @@ dependencies {
     // Navigation
     implementation("androidx.navigation:navigation-compose:2.9.5")
 
+    // Icons
+    implementation("androidx.compose.material:material-icons-core:1.7.8")
+    implementation("androidx.compose.material:material-icons-extended:1.7.8")
+
     // Room
     implementation("androidx.room:room-runtime:2.8.2")
     implementation("androidx.room:room-ktx:2.8.2")
