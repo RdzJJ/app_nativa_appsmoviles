@@ -208,7 +208,7 @@ fun HabitCard(
                             .padding(bottom = 12.dp)
                             .alpha(if (isCompletedToday) 0.6f else 1f),
             shape = RoundedCornerShape(16.dp),
-            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+            colors = CardDefaults.cardColors(containerColor = Color(0xFFE8E8E8)),
             onClick = onClick
     ) {
         Row(

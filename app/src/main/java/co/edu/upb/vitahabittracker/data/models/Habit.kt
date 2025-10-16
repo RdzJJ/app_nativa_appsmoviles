@@ -14,7 +14,8 @@ data class Habit(
         val icon: String = "✓",
         val createdAt: LocalDateTime = LocalDateTime.now(),
         val isActive: Boolean = true,
-        val reminderTime: String? = null // HH:mm format
+        val reminderTime: String? = null, // HH:mm format
+        val finishDate: String? = null // yyyy-MM-dd format
 )
 
 enum class HabitFrequency {
