@@ -16,6 +16,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
@@ -43,92 +44,119 @@ fun HomeScreen(
         modifier =
             Modifier.fillMaxSize().background(color = MaterialTheme.colorScheme.background)
     ) {
-        Column(
-            modifier =
-                Modifier.fillMaxSize()
-                    .padding(horizontal = 16.dp)
-                    .padding(
-                        top = 16.dp,
-                        bottom = 96.dp
-                    ) // Space for nav bar (80dp) + extra spacing
-        ) {
-            // Header
-            Text(
-                text = stringResource(R.string.home_title),
-                fontSize = 28.sp,
-                fontWeight = FontWeight.Bold,
-                color = GreenPrimary,
-                modifier = Modifier.padding(bottom = 8.dp)
-            )
-
-            Text(
-                text = "Hoy es ${java.time.LocalDate.now()}",
-                fontSize = 14.sp,
-                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f),
-                modifier = Modifier.padding(bottom = 24.dp)
-            )
-
-            // Habits List or Empty State
-            if (habits.isEmpty()) {
-                // Empty State
-                Column(
-                    modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState()),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
-                ) {
-                    Icon(
-                        Icons.Filled.CheckCircle,
-                        contentDescription = null,
-                        modifier = Modifier.size(80.dp).padding(bottom = 16.dp),
-                        tint = GreenPrimary.copy(alpha = 0.3f)
-                    )
-
+        Column(modifier = Modifier.fillMaxSize()) {
+            // Header con fondo verde
+            Box(
+                modifier =
+                    Modifier.fillMaxWidth()
+                        .background(
+                            brush =
+                                androidx.compose.ui.graphics.Brush
+                                    .verticalGradient(
+                                        colors =
+                                            listOf(
+                                                GreenPrimary
+                                                    .copy(
+                                                        alpha =
+                                                            0.9f
+                                                    ),
+                                                GreenPrimary
+                                                    .copy(
+                                                        alpha =
+                                                            0.7f
+                                                    )
+                                            )
+                                    ),
+                            shape = RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp)
+                        )
+                        .padding(horizontal = 16.dp, vertical = 24.dp)
+            ) {
+                Column {
                     Text(
-                        text = stringResource(R.string.no_habits),
-                        fontSize = 18.sp,
+                        text = stringResource(R.string.home_title),
+                        fontSize = 32.sp,
                         fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onBackground,
-                        modifier = Modifier.padding(bottom = 8.dp)
+                        color = Color.White,
+                        modifier = Modifier.padding(bottom = 4.dp)
                     )
 
                     Text(
-                        text = stringResource(R.string.no_habits_description),
+                        text = "Hoy es ${java.time.LocalDate.now()}",
                         fontSize = 14.sp,
-                        color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f),
-                        modifier = Modifier.padding(bottom = 32.dp)
+                        color = Color.White.copy(alpha = 0.9f)
                     )
+                }
+            }
 
-                    Button(
-                        onClick = onAddHabitClick,
-                        colors = ButtonDefaults.buttonColors(containerColor = GreenPrimary),
-                        shape = RoundedCornerShape(12.dp),
-                        modifier = Modifier.height(48.dp)
+            // Contenido principal
+            Column(
+                modifier =
+                    Modifier.fillMaxSize()
+                        .padding(horizontal = 16.dp)
+                        .padding(top = 16.dp, bottom = 96.dp)
+            ) {
+                // Habits List or Empty State
+                if (habits.isEmpty()) {
+                    // Empty State
+                    Column(
+                        modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState()),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
                     ) {
                         Icon(
-                            Icons.Filled.Add,
+                            Icons.Filled.CheckCircle,
                             contentDescription = null,
-                            modifier = Modifier.padding(end = 8.dp)
+                            modifier = Modifier.size(80.dp).padding(bottom = 16.dp),
+                            tint = GreenPrimary.copy(alpha = 0.3f)
                         )
-                        Text(stringResource(R.string.add_habit))
-                    }
-                }
-            } else {
-                // Habits List
-                LazyColumn(modifier = Modifier.fillMaxSize()) {
-                    items(habits) { habit ->
-                        HabitCard(
-                            habit = habit,
-                            onClick = { onHabitClick(habit) },
-                            onDelete = {
-                                habitToDelete = habit
-                                showDeleteDialog = true
-                            },
-                            onComplete = { onCompleteHabit(habit) },
-                            isCompletedToday = completedHabitsToday.contains(habit.id)
-                        )
-                    }
 
-                    item { Spacer(modifier = Modifier.height(16.dp)) }
+                        Text(
+                            text = stringResource(R.string.no_habits),
+                            fontSize = 18.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.onBackground,
+                            modifier = Modifier.padding(bottom = 8.dp)
+                        )
+
+                        Text(
+                            text = stringResource(R.string.no_habits_description),
+                            fontSize = 14.sp,
+                            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f),
+                            modifier = Modifier.padding(bottom = 32.dp)
+                        )
+
+                        Button(
+                            onClick = onAddHabitClick,
+                            colors = ButtonDefaults.buttonColors(containerColor = GreenPrimary),
+                            shape = RoundedCornerShape(12.dp),
+                            modifier = Modifier.height(48.dp)
+                        ) {
+                            Icon(
+                                Icons.Filled.Add,
+                                contentDescription = null,
+                                modifier = Modifier.padding(end = 8.dp)
+                            )
+                            Text(stringResource(R.string.add_habit))
+                        }
+                    }
+                } else {
+                    // Habits List
+                    LazyColumn(modifier = Modifier.fillMaxSize()) {
+                        items(habits) { habit ->
+                            HabitCard(
+                                habit = habit,
+                                onClick = { onHabitClick(habit) },
+                                onDelete = {
+                                    habitToDelete = habit
+                                    showDeleteDialog = true
+                                },
+                                onComplete = { onCompleteHabit(habit) },
+                                isCompletedToday = completedHabitsToday.contains(habit.id)
+                            )
+                        }
+
+                        item { Spacer(modifier = Modifier.height(16.dp)) }
+                    }
                 }
             }
         }
