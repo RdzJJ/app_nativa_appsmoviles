@@ -4,7 +4,7 @@
     "type": "COMPATIBLE_SCREEN_MANIFEST",
     "kind": "Directory"
   },
-  "applicationId": "com.habitsapp",
+  "applicationId": "co.edu.upb.vitahabittracker",
   "variantName": "debug",
   "elements": []
 }

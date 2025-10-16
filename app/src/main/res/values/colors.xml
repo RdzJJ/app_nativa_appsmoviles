@@ -1,36 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="md_theme_light_primary">#6750A4</color>
-    <color name="md_theme_light_onPrimary">#FFFFFF</color>
-    <color name="md_theme_light_primaryContainer">#EADDFF</color>
-    <color name="md_theme_light_onPrimaryContainer">#21005D</color>
-    <color name="md_theme_light_secondary">#625B71</color>
-    <color name="md_theme_light_onSecondary">#FFFFFF</color>
-    <color name="md_theme_light_secondaryContainer">#E8DEF8</color>
-    <color name="md_theme_light_onSecondaryContainer">#1D192B</color>
-    <color name="md_theme_light_tertiary">#7D5260</color>
-    <color name="md_theme_light_onTertiary">#FFFFFF</color>
-    <color name="md_theme_light_tertiaryContainer">#FFD8E4</color>
-    <color name="md_theme_light_onTertiaryContainer">#31111D</color>
-    <color name="md_theme_light_error">#BA1A1A</color>
-    <color name="md_theme_light_onError">#FFFFFF</color>
-    <color name="md_theme_light_errorContainer">#FFDAD6</color>
-    <color name="md_theme_light_onErrorContainer">#410002</color>
-    <color name="md_theme_light_outline">#79747E</color>
-    <color name="md_theme_light_background">#FFFBFE</color>
-    <color name="md_theme_light_onBackground">#1C1B1F</color>
-    <color name="md_theme_light_surface">#FFFBFE</color>
-    <color name="md_theme_light_onSurface">#1C1B1F</color>
-    <color name="md_theme_light_surfaceVariant">#E7E0EC</color>
-    <color name="md_theme_light_onSurfaceVariant">#49454F</color>
-    <color name="md_theme_light_inverseSurface">#313033</color>
-    <color name="md_theme_light_inverseOnSurface">#F4EFF4</color>
-    <color name="md_theme_light_inversePrimary">#D0BCFF</color>
+    <!-- Primary Green Colors -->
+    <color name="primary_light">#81C784</color>
+    <color name="primary">#4CAF50</color>
+    <color name="primary_dark">#388E3C</color>
     
-    <!-- Custom colors for habits -->
-    <color name="habit_completed">#4CAF50</color>
-    <color name="habit_pending">#FF9800</color>
-    <color name="habit_missed">#F44336</color>
-    <color name="streak_gold">#FFD700</color>
+    <!-- Secondary Blue Colors -->
+    <color name="secondary_light">#64B5F6</color>
+    <color name="secondary">#2196F3</color>
+    <color name="secondary_dark">#1976D2</color>
+    
+    <!-- Tertiary Teal -->
+    <color name="tertiary_light">#80DEEA</color>
+    <color name="tertiary">#00BCD4</color>
+    <color name="tertiary_dark">#0097A7</color>
+    
+    <!-- Neutral Colors -->
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="gray_light">#F5F5F5</color>
+    <color name="gray_medium">#BDBDBD</color>
+    <color name="gray_dark">#424242</color>
+    
+    <!-- Accent Colors -->
+    <color name="success">#4CAF50</color>
+    <color name="warning">#FFC107</color>
+    <color name="error">#F44336</color>
+    <color name="info">#2196F3</color>
 </resources>
-

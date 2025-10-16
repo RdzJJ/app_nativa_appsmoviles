@@ -4,7 +4,7 @@
     "type": "MERGED_MANIFESTS",
     "kind": "Directory"
   },
-  "applicationId": "com.habitsapp",
+  "applicationId": "co.edu.upb.vitahabittracker",
   "variantName": "debug",
   "elements": [
     {
