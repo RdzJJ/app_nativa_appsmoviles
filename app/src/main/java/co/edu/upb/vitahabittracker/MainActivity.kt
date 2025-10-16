@@ -25,6 +25,7 @@ import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -40,6 +41,8 @@ import co.edu.upb.vitahabittracker.data.models.Habit
 import co.edu.upb.vitahabittracker.data.models.HabitEntry
 import co.edu.upb.vitahabittracker.data.models.User
 import co.edu.upb.vitahabittracker.data.repository.AuthRepository
+import co.edu.upb.vitahabittracker.data.repository.FirestoreHabitEntryRepository
+import co.edu.upb.vitahabittracker.data.repository.FirestoreHabitRepository
 import co.edu.upb.vitahabittracker.ui.screens.AddHabitDialog
 import co.edu.upb.vitahabittracker.ui.screens.HomeScreen
 import co.edu.upb.vitahabittracker.ui.screens.LoginScreen
@@ -78,6 +81,12 @@ fun VitaHabitosApp() {
         val authRepository = remember { AuthRepository() }
         val coroutineScope = rememberCoroutineScope()
 
+        // Firestore repositories - initialized when user logs in
+        var habitRepository by remember { mutableStateOf<FirestoreHabitRepository?>(null) }
+        var habitEntryRepository by remember {
+                mutableStateOf<FirestoreHabitEntryRepository?>(null)
+        }
+
         // Sample habits - empty by default
         var habits by remember { mutableStateOf<List<Habit>>(emptyList()) }
         var habitEntries by remember { mutableStateOf<List<HabitEntry>>(emptyList()) }
@@ -86,6 +95,35 @@ fun VitaHabitosApp() {
         var showEditProfileDialog by remember { mutableStateOf(false) }
         var completedHabitsToday by remember { mutableStateOf<Set<Int>>(emptySet()) }
         var showEditHabitDialog by remember { mutableStateOf(false) }
+
+        // Load habits from Firestore when user is logged in
+        LaunchedEffect(currentUser) {
+                currentUser?.let { user ->
+                        habitRepository = FirestoreHabitRepository(user.id)
+                        habitEntryRepository = FirestoreHabitEntryRepository(user.id)
+
+                        // Listen to real-time updates
+                        habitRepository?.getHabitsFlow()?.collect { fetchedHabits ->
+                                habits = fetchedHabits
+                        }
+                }
+        }
+
+        // Load habit entries when user is logged in
+        LaunchedEffect(currentUser) {
+                currentUser?.let { user ->
+                        habitEntryRepository?.getHabitEntriesFlow()?.collect { fetchedEntries ->
+                                habitEntries = fetchedEntries
+                                // Update completed habits for today
+                                val today = LocalDate.now()
+                                completedHabitsToday =
+                                        fetchedEntries
+                                                .filter { it.completedDate == today }
+                                                .map { it.habitId }
+                                                .toSet()
+                        }
+                }
+        }
 
         when {
                 !isLoggedIn -> {
@@ -188,63 +226,52 @@ fun VitaHabitosApp() {
                                         editingHabit = null
                                 },
                                 onDeleteHabit = { habit ->
-                                        habits = habits.filter { it.id != habit.id }
-                                        // También eliminar las entradas relacionadas
-                                        habitEntries =
-                                                habitEntries.filter { it.habitId != habit.id }
-                                        // Cancel reminders for this habit
-                                        notificationScheduler.cancelHabitReminder(habit.id)
+                                        coroutineScope.launch {
+                                                // Delete from Firestore
+                                                habitRepository?.deleteHabit(habit.id)
+                                                habitEntryRepository?.deleteEntriesForHabit(
+                                                        habit.id
+                                                )
+                                                // Cancel reminders for this habit
+                                                notificationScheduler.cancelHabitReminder(habit.id)
+                                        }
                                 },
                                 onEditHabit = { habit ->
                                         editingHabit = habit
                                         showEditHabitDialog = true
                                 },
                                 onCompleteHabit = { habit ->
-                                        val today = LocalDate.now()
-
-                                        completedHabitsToday =
-                                                completedHabitsToday
-                                                        .toMutableSet()
-                                                        .apply {
-                                                                if (contains(habit.id)) {
-                                                                        remove(habit.id)
-                                                                        // Remover la entrada del
-                                                                        // día de hoy
-                                                                        habitEntries =
-                                                                                habitEntries
-                                                                                        .filter {
-                                                                                                !(it.habitId ==
-                                                                                                        habit.id &&
-                                                                                                        it.completedDate ==
-                                                                                                                today)
-                                                                                        }
-                                                                } else {
-                                                                        add(habit.id)
-                                                                        // Agregar nueva entrada
-                                                                        val newEntry =
-                                                                                HabitEntry(
-                                                                                        id =
-                                                                                                (habitEntries
-                                                                                                        .maxOfOrNull {
-                                                                                                                it.id
-                                                                                                        }
-                                                                                                        ?: 0) +
-                                                                                                        1,
-                                                                                        habitId =
-                                                                                                habit.id,
-                                                                                        completedDate =
-                                                                                                today,
-                                                                                        completedTime =
-                                                                                                LocalTime
-                                                                                                        .now()
-                                                                                                        .toString()
-                                                                                )
-                                                                        habitEntries =
-                                                                                habitEntries +
-                                                                                        newEntry
-                                                                }
+                                        coroutineScope.launch {
+                                                val today = LocalDate.now()
+                                                val existingEntry =
+                                                        habitEntries.find {
+                                                                it.habitId == habit.id &&
+                                                                        it.completedDate == today
                                                         }
-                                                        .toSet()
+
+                                                if (existingEntry != null) {
+                                                        // Remove entry from Firestore
+                                                        habitEntryRepository?.deleteHabitEntry(
+                                                                existingEntry.id
+                                                        )
+                                                } else {
+                                                        // Add new entry to Firestore
+                                                        val newEntry =
+                                                                HabitEntry(
+                                                                        id =
+                                                                                System.currentTimeMillis()
+                                                                                        .toInt(),
+                                                                        habitId = habit.id,
+                                                                        completedDate = today,
+                                                                        completedTime =
+                                                                                LocalTime.now()
+                                                                                        .toString()
+                                                                )
+                                                        habitEntryRepository?.addHabitEntry(
+                                                                newEntry
+                                                        )
+                                                }
+                                        }
                                 },
                                 onLogout = {
                                         sessionManager.clearSession()
@@ -264,54 +291,54 @@ fun VitaHabitosApp() {
                                         frequency,
                                         reminderTime,
                                         finishDate ->
-                                        if (showEditHabitDialog && editingHabit != null) {
-                                                // Update existing habit
-                                                val updatedHabit =
-                                                        editingHabit!!.copy(
-                                                                name = name,
-                                                                description = description,
-                                                                frequency = frequency,
-                                                                reminderTime = reminderTime,
-                                                                finishDate = finishDate
+                                        coroutineScope.launch {
+                                                if (showEditHabitDialog && editingHabit != null) {
+                                                        // Update existing habit in Firestore
+                                                        val updatedHabit =
+                                                                editingHabit!!.copy(
+                                                                        name = name,
+                                                                        description = description,
+                                                                        frequency = frequency,
+                                                                        reminderTime = reminderTime,
+                                                                        finishDate = finishDate
+                                                                )
+                                                        habitRepository?.updateHabit(updatedHabit)
+                                                        showEditHabitDialog = false
+                                                        editingHabit = null
+
+                                                        // Reschedule notification
+                                                        notificationScheduler.cancelHabitReminder(
+                                                                updatedHabit.id
                                                         )
-                                                habits =
-                                                        habits.map {
-                                                                if (it.id == updatedHabit.id)
-                                                                        updatedHabit
-                                                                else it
+                                                        if (reminderTime != null) {
+                                                                notificationScheduler
+                                                                        .scheduleHabitReminder(
+                                                                                updatedHabit
+                                                                        )
                                                         }
-                                                showEditHabitDialog = false
-                                                editingHabit = null
+                                                } else {
+                                                        // Create new habit in Firestore
+                                                        val newHabit =
+                                                                Habit(
+                                                                        id =
+                                                                                System.currentTimeMillis()
+                                                                                        .toInt(),
+                                                                        name = name,
+                                                                        description = description,
+                                                                        frequency = frequency,
+                                                                        reminderTime = reminderTime,
+                                                                        finishDate = finishDate
+                                                                )
+                                                        habitRepository?.addHabit(newHabit)
+                                                        showAddHabitDialog = false
 
-                                                // Reschedule notification
-                                                notificationScheduler.cancelHabitReminder(
-                                                        updatedHabit.id
-                                                )
-                                                if (reminderTime != null) {
-                                                        notificationScheduler.scheduleHabitReminder(
-                                                                updatedHabit
-                                                        )
-                                                }
-                                        } else {
-                                                // Create new habit
-                                                val newHabit =
-                                                        Habit(
-                                                                id = (habits.maxOfOrNull { it.id }
-                                                                                ?: 0) + 1,
-                                                                name = name,
-                                                                description = description,
-                                                                frequency = frequency,
-                                                                reminderTime = reminderTime,
-                                                                finishDate = finishDate
-                                                        )
-                                                habits = habits + newHabit
-                                                showAddHabitDialog = false
-
-                                                // Schedule notification if reminder is set
-                                                if (reminderTime != null) {
-                                                        notificationScheduler.scheduleHabitReminder(
-                                                                newHabit
-                                                        )
+                                                        // Schedule notification if reminder is set
+                                                        if (reminderTime != null) {
+                                                                notificationScheduler
+                                                                        .scheduleHabitReminder(
+                                                                                newHabit
+                                                                        )
+                                                        }
                                                 }
                                         }
                                 },
