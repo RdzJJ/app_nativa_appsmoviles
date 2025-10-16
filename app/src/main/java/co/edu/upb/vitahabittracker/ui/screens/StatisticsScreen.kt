@@ -262,7 +262,7 @@ fun CalendarGrid(
 ) {
     val firstDay = yearMonth.atDay(1)
     val lastDay = yearMonth.atEndOfMonth()
-    val startDayOfWeek = (firstDay.dayOfWeek.value % 7)
+    val startDayOfWeek = (firstDay.dayOfWeek.value - 1)
     val daysInMonth = lastDay.dayOfMonth
 
     val dayLabels = listOf("Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom")
