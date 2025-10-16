@@ -96,31 +96,31 @@ fun VitaHabitosApp() {
         var completedHabitsToday by remember { mutableStateOf<Set<Int>>(emptySet()) }
         var showEditHabitDialog by remember { mutableStateOf(false) }
 
-        // Load habits from Firestore when user is logged in
+        // Initialize repositories and load data when user logs in
         LaunchedEffect(currentUser) {
                 currentUser?.let { user ->
                         habitRepository = FirestoreHabitRepository(user.id)
                         habitEntryRepository = FirestoreHabitEntryRepository(user.id)
 
-                        // Listen to real-time updates
-                        habitRepository?.getHabitsFlow()?.collect { fetchedHabits ->
-                                habits = fetchedHabits
+                        // Launch separate coroutines for each flow
+                        launch {
+                                habitRepository?.getHabitsFlow()?.collect { fetchedHabits ->
+                                        habits = fetchedHabits
+                                }
                         }
-                }
-        }
 
-        // Load habit entries when user is logged in
-        LaunchedEffect(currentUser) {
-                currentUser?.let { user ->
-                        habitEntryRepository?.getHabitEntriesFlow()?.collect { fetchedEntries ->
-                                habitEntries = fetchedEntries
-                                // Update completed habits for today
-                                val today = LocalDate.now()
-                                completedHabitsToday =
-                                        fetchedEntries
-                                                .filter { it.completedDate == today }
-                                                .map { it.habitId }
-                                                .toSet()
+                        launch {
+                                habitEntryRepository?.getHabitEntriesFlow()?.collect {
+                                        fetchedEntries ->
+                                        habitEntries = fetchedEntries
+                                        // Update completed habits for today
+                                        val today = LocalDate.now()
+                                        completedHabitsToday =
+                                                fetchedEntries
+                                                        .filter { it.completedDate == today }
+                                                        .map { it.habitId }
+                                                        .toSet()
+                                }
                         }
                 }
         }

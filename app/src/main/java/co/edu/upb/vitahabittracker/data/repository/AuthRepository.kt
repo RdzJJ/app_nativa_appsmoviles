@@ -13,92 +13,132 @@ class AuthRepository {
     suspend fun login(email: String, password: String): Result<User> {
         return try {
             if (email.isEmpty() || password.isEmpty()) {
-                return Result.failure(Exception("Email and password are required"))
+                return Result.failure(Exception("El correo y la contraseña son obligatorios"))
             }
             if (!email.contains("@")) {
-                return Result.failure(Exception("Invalid email format"))
+                return Result.failure(Exception("Formato de correo inválido"))
             }
             if (password.length < 6) {
-                return Result.failure(Exception("Password must be at least 6 characters"))
+                return Result.failure(Exception("La contraseña debe tener al menos 6 caracteres"))
             }
 
             val authResult = auth.signInWithEmailAndPassword(email, password).await()
-            val firebaseUser = authResult.user ?: throw Exception("Login failed")
+            val firebaseUser = authResult.user ?: throw Exception("Error al iniciar sesión")
 
             // Get user data from Firestore
             val userDoc = firestore.collection("users").document(firebaseUser.uid).get().await()
-            
-            val user = if (userDoc.exists()) {
-                User(
-                    id = firebaseUser.uid,
-                    name = userDoc.getString("name") ?: firebaseUser.displayName ?: email.substringBefore("@"),
-                    email = firebaseUser.email ?: email,
-                    bio = userDoc.getString("bio") ?: "Nuevo usuario de Vita Habitos",
-                    joinDate = userDoc.getString("joinDate") ?: java.time.LocalDate.now().toString()
-                )
-            } else {
-                // Create user document if it doesn't exist
-                val newUser = User(
-                    id = firebaseUser.uid,
-                    name = firebaseUser.displayName ?: email.substringBefore("@"),
-                    email = firebaseUser.email ?: email,
-                    bio = "Nuevo usuario de Vita Habitos",
-                    joinDate = java.time.LocalDate.now().toString()
-                )
-                saveUserToFirestore(newUser)
-                newUser
-            }
+
+            val user =
+                    if (userDoc.exists()) {
+                        User(
+                                id = firebaseUser.uid,
+                                name = userDoc.getString("name")
+                                                ?: firebaseUser.displayName
+                                                        ?: email.substringBefore("@"),
+                                email = firebaseUser.email ?: email,
+                                bio = userDoc.getString("bio") ?: "Nuevo usuario de Vita Habitos",
+                                joinDate = userDoc.getString("joinDate")
+                                                ?: java.time.LocalDate.now().toString()
+                        )
+                    } else {
+                        // Create user document if it doesn't exist
+                        val newUser =
+                                User(
+                                        id = firebaseUser.uid,
+                                        name = firebaseUser.displayName
+                                                        ?: email.substringBefore("@"),
+                                        email = firebaseUser.email ?: email,
+                                        bio = "Nuevo usuario de Vita Habitos",
+                                        joinDate = java.time.LocalDate.now().toString()
+                                )
+                        saveUserToFirestore(newUser)
+                        newUser
+                    }
 
             Result.success(user)
         } catch (e: Exception) {
-            Result.failure(Exception(e.message ?: "Error en el login"))
+            val errorMessage =
+                    when {
+                        e.message?.contains("password", ignoreCase = true) == true ||
+                                e.message?.contains(
+                                        "INVALID_LOGIN_CREDENTIALS",
+                                        ignoreCase = true
+                                ) == true ||
+                                e.message?.contains("wrong-password", ignoreCase = true) == true ||
+                                e.message?.contains("user-not-found", ignoreCase = true) == true ||
+                                e.message?.contains("invalid-credential", ignoreCase = true) ==
+                                        true -> "Correo o contraseña incorrectos"
+                        e.message?.contains("network", ignoreCase = true) == true ->
+                                "Error de conexión. Verifica tu internet"
+                        e.message?.contains("too-many-requests", ignoreCase = true) == true ->
+                                "Demasiados intentos. Intenta más tarde"
+                        e.message?.contains("user-disabled", ignoreCase = true) == true ->
+                                "Esta cuenta ha sido deshabilitada"
+                        else -> "Correo o contraseña incorrectos"
+                    }
+            Result.failure(Exception(errorMessage))
         }
     }
 
     suspend fun signup(email: String, password: String, name: String): Result<User> {
         return try {
             if (email.isEmpty() || password.isEmpty() || name.isEmpty()) {
-                return Result.failure(Exception("All fields are required"))
+                return Result.failure(Exception("Todos los campos son obligatorios"))
             }
             if (!email.contains("@")) {
-                return Result.failure(Exception("Invalid email format"))
+                return Result.failure(Exception("Formato de correo inválido"))
             }
             if (password.length < 6) {
-                return Result.failure(Exception("Password must be at least 6 characters"))
+                return Result.failure(Exception("La contraseña debe tener al menos 6 caracteres"))
             }
 
             val authResult = auth.createUserWithEmailAndPassword(email, password).await()
-            val firebaseUser = authResult.user ?: throw Exception("Signup failed")
+            val firebaseUser = authResult.user ?: throw Exception("Error al crear la cuenta")
 
             // Update Firebase Auth profile
-            val profileUpdates = UserProfileChangeRequest.Builder()
-                .setDisplayName(name)
-                .build()
+            val profileUpdates = UserProfileChangeRequest.Builder().setDisplayName(name).build()
             firebaseUser.updateProfile(profileUpdates).await()
 
             // Create user in Firestore
-            val user = User(
-                id = firebaseUser.uid,
-                name = name,
-                email = firebaseUser.email ?: email,
-                bio = "Nuevo usuario de Vita Habitos",
-                joinDate = java.time.LocalDate.now().toString()
-            )
-            
+            val user =
+                    User(
+                            id = firebaseUser.uid,
+                            name = name,
+                            email = firebaseUser.email ?: email,
+                            bio = "Nuevo usuario de Vita Habitos",
+                            joinDate = java.time.LocalDate.now().toString()
+                    )
+
             saveUserToFirestore(user)
             Result.success(user)
         } catch (e: Exception) {
-            Result.failure(Exception(e.message ?: "Error en el registro"))
+            val errorMessage =
+                    when {
+                        e.message?.contains("email-already-in-use", ignoreCase = true) == true ||
+                                e.message?.contains("already in use", ignoreCase = true) == true ->
+                                "Este correo ya está registrado"
+                        e.message?.contains("invalid-email", ignoreCase = true) == true ->
+                                "Correo electrónico inválido"
+                        e.message?.contains("weak-password", ignoreCase = true) == true ->
+                                "La contraseña es muy débil"
+                        e.message?.contains("network", ignoreCase = true) == true ->
+                                "Error de conexión. Verifica tu internet"
+                        e.message?.contains("too-many-requests", ignoreCase = true) == true ->
+                                "Demasiados intentos. Intenta más tarde"
+                        else -> "Error al crear la cuenta. Intenta de nuevo"
+                    }
+            Result.failure(Exception(errorMessage))
         }
     }
 
     private suspend fun saveUserToFirestore(user: User) {
-        val userData = hashMapOf(
-            "name" to user.name,
-            "email" to user.email,
-            "bio" to user.bio,
-            "joinDate" to user.joinDate
-        )
+        val userData =
+                hashMapOf(
+                        "name" to user.name,
+                        "email" to user.email,
+                        "bio" to user.bio,
+                        "joinDate" to user.joinDate
+                )
         firestore.collection("users").document(user.id).set(userData).await()
     }
 
@@ -114,11 +154,11 @@ class AuthRepository {
     fun getCurrentUser(): User? {
         val firebaseUser = auth.currentUser ?: return null
         return User(
-            id = firebaseUser.uid,
-            name = firebaseUser.displayName ?: "",
-            email = firebaseUser.email ?: "",
-            bio = "",
-            joinDate = ""
+                id = firebaseUser.uid,
+                name = firebaseUser.displayName ?: "",
+                email = firebaseUser.email ?: "",
+                bio = "",
+                joinDate = ""
         )
     }
 }
