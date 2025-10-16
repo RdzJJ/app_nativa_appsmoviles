@@ -16,6 +16,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -36,50 +37,33 @@ fun HomeScreen(
     onCompleteHabit: (Habit) -> Unit,
     completedHabitsToday: Set<Int> = emptySet()
 ) {
-    // Estado para controlar el diálogo de confirmación
     var habitToDelete by remember { mutableStateOf<Habit?>(null) }
     var showDeleteDialog by remember { mutableStateOf(false) }
 
     Box(
-        modifier =
-            Modifier.fillMaxSize().background(color = MaterialTheme.colorScheme.background)
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
-            // Header con fondo verde
             Box(
-                modifier =
-                    Modifier.fillMaxWidth()
-                        .background(
-                            brush =
-                                androidx.compose.ui.graphics.Brush
-                                    .verticalGradient(
-                                        colors =
-                                            listOf(
-                                                GreenPrimary
-                                                    .copy(
-                                                        alpha =
-                                                            0.9f
-                                                    ),
-                                                GreenPrimary
-                                                    .copy(
-                                                        alpha =
-                                                            0.7f
-                                                    )
-                                            )
-                                    ),
-                            shape = RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp)
-                        )
-                        .padding(horizontal = 16.dp, vertical = 24.dp)
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(
+                        brush = Brush.horizontalGradient(
+                            listOf(GreenPrimary.copy(alpha = 0.9f), BluePrimary.copy(alpha = 0.8f))
+                        ),
+                        shape = RoundedCornerShape(bottomStart = 32.dp, bottomEnd = 32.dp)
+                    )
+                    .padding(horizontal = 20.dp, vertical = 28.dp)
             ) {
                 Column {
                     Text(
                         text = stringResource(R.string.home_title),
-                        fontSize = 32.sp,
+                        fontSize = 30.sp,
                         fontWeight = FontWeight.Bold,
-                        color = Color.White,
-                        modifier = Modifier.padding(bottom = 4.dp)
+                        color = Color.White
                     )
-
                     Text(
                         text = "Hoy es ${java.time.LocalDate.now()}",
                         fontSize = 14.sp,
@@ -88,18 +72,17 @@ fun HomeScreen(
                 }
             }
 
-            // Contenido principal
             Column(
-                modifier =
-                    Modifier.fillMaxSize()
-                        .padding(horizontal = 16.dp)
-                        .padding(top = 16.dp, bottom = 96.dp)
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 16.dp)
+                    .padding(top = 16.dp, bottom = 96.dp)
             ) {
-                // Habits List or Empty State
                 if (habits.isEmpty()) {
-                    // Empty State
                     Column(
-                        modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState()),
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .verticalScroll(rememberScrollState()),
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.Center
                     ) {
@@ -109,38 +92,29 @@ fun HomeScreen(
                             modifier = Modifier.size(80.dp).padding(bottom = 16.dp),
                             tint = GreenPrimary.copy(alpha = 0.3f)
                         )
-
                         Text(
                             text = stringResource(R.string.no_habits),
                             fontSize = 18.sp,
                             fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.onBackground,
-                            modifier = Modifier.padding(bottom = 8.dp)
+                            color = MaterialTheme.colorScheme.onBackground
                         )
-
                         Text(
                             text = stringResource(R.string.no_habits_description),
                             fontSize = 14.sp,
                             color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f),
-                            modifier = Modifier.padding(bottom = 32.dp)
+                            modifier = Modifier.padding(vertical = 8.dp)
                         )
-
                         Button(
                             onClick = onAddHabitClick,
                             colors = ButtonDefaults.buttonColors(containerColor = GreenPrimary),
                             shape = RoundedCornerShape(12.dp),
                             modifier = Modifier.height(48.dp)
                         ) {
-                            Icon(
-                                Icons.Filled.Add,
-                                contentDescription = null,
-                                modifier = Modifier.padding(end = 8.dp)
-                            )
+                            Icon(Icons.Filled.Add, contentDescription = null, modifier = Modifier.padding(end = 8.dp))
                             Text(stringResource(R.string.add_habit))
                         }
                     }
                 } else {
-                    // Habits List
                     LazyColumn(modifier = Modifier.fillMaxSize()) {
                         items(habits) { habit ->
                             HabitCard(
@@ -154,75 +128,46 @@ fun HomeScreen(
                                 isCompletedToday = completedHabitsToday.contains(habit.id)
                             )
                         }
-
                         item { Spacer(modifier = Modifier.height(16.dp)) }
                     }
                 }
             }
         }
 
-        // FAB
         FloatingActionButton(
             onClick = onAddHabitClick,
             modifier = Modifier.align(Alignment.BottomEnd).padding(16.dp),
             containerColor = GreenPrimary,
-            contentColor = MaterialTheme.colorScheme.onPrimary
-        ) { Icon(Icons.Filled.Add, contentDescription = stringResource(R.string.add_habit)) }
+            contentColor = Color.White
+        ) {
+            Icon(Icons.Filled.Add, contentDescription = stringResource(R.string.add_habit))
+        }
     }
 
-    // Diálogo de confirmación de eliminación
     if (showDeleteDialog && habitToDelete != null) {
         AlertDialog(
             onDismissRequest = {
                 showDeleteDialog = false
                 habitToDelete = null
             },
-            icon = {
-                Icon(
-                    Icons.Filled.Delete,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.error
-                )
-            },
-            title = {
-                Text(
-                    text = stringResource(R.string.delete_habit_title),
-                    fontWeight = FontWeight.Bold
-                )
-            },
-            text = {
-                Text(
-                    text = stringResource(
-                        R.string.delete_habit_message,
-                        habitToDelete!!.name
-                    )
-                )
-            },
+            icon = { Icon(Icons.Filled.Delete, contentDescription = null, tint = MaterialTheme.colorScheme.error) },
+            title = { Text(stringResource(R.string.delete_habit_title), fontWeight = FontWeight.Bold) },
+            text = { Text(stringResource(R.string.delete_habit_message, habitToDelete!!.name)) },
             confirmButton = {
-                TextButton(
-                    onClick = {
-                        onDeleteHabit(habitToDelete!!)
-                        showDeleteDialog = false
-                        habitToDelete = null
-                    },
-                    colors = ButtonDefaults.textButtonColors(
-                        contentColor = MaterialTheme.colorScheme.error
-                    )
-                ) {
-                    Text(stringResource(R.string.delete))
+                TextButton(onClick = {
+                    onDeleteHabit(habitToDelete!!)
+                    showDeleteDialog = false
+                    habitToDelete = null
+                }) {
+                    Text(stringResource(R.string.delete), color = MaterialTheme.colorScheme.error)
                 }
             },
             dismissButton = {
-                TextButton(
-                    onClick = {
-                        showDeleteDialog = false
-                        habitToDelete = null
-                    }
-                ) {
-                    Text(stringResource(R.string.cancel))
-                }
+                TextButton(onClick = {
+                    showDeleteDialog = false
+                    habitToDelete = null
+                }) { Text(stringResource(R.string.cancel)) }
             },
-            containerColor = MaterialTheme.colorScheme.surface,
             shape = RoundedCornerShape(16.dp)
         )
     }
@@ -237,10 +182,10 @@ fun HabitCard(
     isCompletedToday: Boolean
 ) {
     Card(
-        modifier =
-            Modifier.fillMaxWidth()
-                .padding(bottom = 12.dp)
-                .alpha(if (isCompletedToday) 0.6f else 1f),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(bottom = 12.dp)
+            .alpha(if (isCompletedToday) 0.6f else 1f),
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         onClick = onClick
@@ -272,11 +217,7 @@ fun HabitCard(
                     modifier = Modifier.padding(top = 8.dp).fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    Chip(
-                        label = { Text(habit.frequency.name, fontSize = 12.sp) },
-                        modifier = Modifier.height(28.dp)
-                    )
-
+                    Chip(label = habit.frequency.name)
                     Text(
                         text = "0 días",
                         fontSize = 12.sp,
@@ -287,27 +228,20 @@ fun HabitCard(
                 }
             }
 
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier.width(80.dp)
-            ) {
+            Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.width(80.dp)) {
                 IconButton(
                     onClick = onComplete,
-                    modifier =
-                        Modifier.size(48.dp)
-                            .background(
-                                color =
-                                    if (isCompletedToday) GreenPrimary
-                                    else GreenPrimary.copy(alpha = 0.1f),
-                                shape = RoundedCornerShape(12.dp)
-                            )
+                    modifier = Modifier
+                        .size(48.dp)
+                        .background(
+                            color = if (isCompletedToday) GreenPrimary else GreenPrimary.copy(alpha = 0.1f),
+                            shape = RoundedCornerShape(12.dp)
+                        )
                 ) {
                     Icon(
                         Icons.Filled.CheckCircle,
                         contentDescription = stringResource(R.string.completed_today),
-                        tint =
-                            if (isCompletedToday) MaterialTheme.colorScheme.onPrimary
-                            else GreenPrimary,
+                        tint = if (isCompletedToday) MaterialTheme.colorScheme.onPrimary else GreenPrimary,
                         modifier = Modifier.size(24.dp)
                     )
                 }
@@ -326,18 +260,16 @@ fun HabitCard(
 }
 
 @Composable
-fun Chip(label: @Composable () -> Unit, modifier: Modifier = Modifier) {
+fun Chip(label: String) {
     Surface(
-        modifier =
-            modifier.background(
-                color = BluePrimary.copy(alpha = 0.1f),
-                shape = RoundedCornerShape(8.dp)
-            ),
+        modifier = Modifier.background(BluePrimary.copy(alpha = 0.1f), RoundedCornerShape(8.dp)),
         shape = RoundedCornerShape(8.dp)
     ) {
         Box(
             modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
             contentAlignment = Alignment.Center
-        ) { label() }
+        ) {
+            Text(text = label, fontSize = 12.sp, color = BluePrimary, fontWeight = FontWeight.Medium)
+        }
     }
 }
