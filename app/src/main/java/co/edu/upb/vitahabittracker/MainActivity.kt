@@ -6,8 +6,11 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -29,8 +32,8 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import co.edu.upb.vitahabittracker.data.models.Habit
@@ -211,12 +214,14 @@ fun MainAppScreen(
                     Box(
                             modifier =
                                     Modifier.fillMaxWidth()
-                                            .padding(bottom = 16.dp, start = 16.dp, end = 16.dp),
+                                            .padding(horizontal = 16.dp, vertical = 8.dp)
+                                            .navigationBarsPadding(),
                             contentAlignment = Alignment.BottomCenter
                     ) {
                         NavigationBar(
                                 modifier =
-                                        Modifier.clip(RoundedCornerShape(28.dp))
+                                        Modifier.fillMaxWidth()
+                                                .height(64.dp)
                                                 .background(
                                                         brush =
                                                                 Brush.horizontalGradient(
@@ -233,10 +238,11 @@ fun MainAppScreen(
                                                                                                                 0.95f
                                                                                                 )
                                                                                 )
-                                                                )
+                                                                ),
+                                                        shape = RoundedCornerShape(28.dp)
                                                 ),
-                                containerColor = GreenPrimary.copy(alpha = 0.95f),
-                                contentColor = GreenPrimary
+                                containerColor = Color.Transparent,
+                                tonalElevation = 0.dp
                         ) {
                             NavigationBarItem(
                                     icon = {
@@ -326,185 +332,32 @@ fun MainAppScreen(
                     }
                 }
         ) { innerPadding ->
-            Box(modifier = Modifier.fillMaxSize()) {
-                Scaffold(
-                        modifier = Modifier.fillMaxSize(),
-                        bottomBar = {
-                            Box(
-                                    modifier =
-                                            Modifier.fillMaxWidth()
-                                                    .padding(
-                                                            bottom = 16.dp,
-                                                            start = 16.dp,
-                                                            end = 16.dp
-                                                    ),
-                                    contentAlignment = Alignment.BottomCenter
-                            ) {
-                                NavigationBar(
-                                        modifier =
-                                                Modifier.clip(RoundedCornerShape(28.dp))
-                                                        .background(
-                                                                brush =
-                                                                        Brush.horizontalGradient(
-                                                                                colors =
-                                                                                        listOf(
-                                                                                                GreenPrimary
-                                                                                                        .copy(
-                                                                                                                alpha =
-                                                                                                                        0.95f
-                                                                                                        ),
-                                                                                                BluePrimary
-                                                                                                        .copy(
-                                                                                                                alpha =
-                                                                                                                        0.95f
-                                                                                                        )
-                                                                                        )
-                                                                        )
-                                                        ),
-                                        containerColor = GreenPrimary.copy(alpha = 0.95f),
-                                        contentColor = GreenPrimary
-                                ) {
-                                    NavigationBarItem(
-                                            icon = {
-                                                Icon(
-                                                        Icons.Filled.Home,
-                                                        contentDescription =
-                                                                stringResource(R.string.home_title)
-                                                )
-                                            },
-                                            label = { Text(stringResource(R.string.home_title)) },
-                                            selected = currentScreen == "home",
-                                            onClick = { onScreenChange("home") },
-                                            colors =
-                                                    NavigationBarItemDefaults.colors(
-                                                            selectedIconColor =
-                                                                    MaterialTheme.colorScheme
-                                                                            .onPrimary,
-                                                            selectedTextColor =
-                                                                    MaterialTheme.colorScheme
-                                                                            .onPrimary,
-                                                            unselectedIconColor =
-                                                                    MaterialTheme.colorScheme
-                                                                            .onPrimary.copy(
-                                                                            alpha = 0.6f
-                                                                    ),
-                                                            unselectedTextColor =
-                                                                    MaterialTheme.colorScheme
-                                                                            .onPrimary.copy(
-                                                                            alpha = 0.6f
-                                                                    ),
-                                                            indicatorColor =
-                                                                    MaterialTheme.colorScheme
-                                                                            .onPrimary.copy(
-                                                                            alpha = 0.15f
-                                                                    )
-                                                    )
-                                    )
-                                    NavigationBarItem(
-                                            icon = {
-                                                Icon(
-                                                        Icons.Filled.BarChart,
-                                                        contentDescription =
-                                                                stringResource(
-                                                                        R.string.statistics_title
-                                                                )
-                                                )
-                                            },
-                                            label = {
-                                                Text(stringResource(R.string.statistics_title))
-                                            },
-                                            selected = currentScreen == "statistics",
-                                            onClick = { onScreenChange("statistics") },
-                                            colors =
-                                                    NavigationBarItemDefaults.colors(
-                                                            selectedIconColor =
-                                                                    MaterialTheme.colorScheme
-                                                                            .onPrimary,
-                                                            selectedTextColor =
-                                                                    MaterialTheme.colorScheme
-                                                                            .onPrimary,
-                                                            unselectedIconColor =
-                                                                    MaterialTheme.colorScheme
-                                                                            .onPrimary.copy(
-                                                                            alpha = 0.6f
-                                                                    ),
-                                                            unselectedTextColor =
-                                                                    MaterialTheme.colorScheme
-                                                                            .onPrimary.copy(
-                                                                            alpha = 0.6f
-                                                                    ),
-                                                            indicatorColor =
-                                                                    MaterialTheme.colorScheme
-                                                                            .onPrimary.copy(
-                                                                            alpha = 0.15f
-                                                                    )
-                                                    )
-                                    )
-                                    NavigationBarItem(
-                                            icon = {
-                                                Icon(
-                                                        Icons.Filled.Person,
-                                                        contentDescription =
-                                                                stringResource(
-                                                                        R.string.profile_title
-                                                                )
-                                                )
-                                            },
-                                            label = {
-                                                Text(stringResource(R.string.profile_title))
-                                            },
-                                            selected = currentScreen == "profile",
-                                            onClick = { onScreenChange("profile") },
-                                            colors =
-                                                    NavigationBarItemDefaults.colors(
-                                                            selectedIconColor =
-                                                                    MaterialTheme.colorScheme
-                                                                            .onPrimary,
-                                                            selectedTextColor =
-                                                                    MaterialTheme.colorScheme
-                                                                            .onPrimary,
-                                                            unselectedIconColor =
-                                                                    MaterialTheme.colorScheme
-                                                                            .onPrimary.copy(
-                                                                            alpha = 0.6f
-                                                                    ),
-                                                            unselectedTextColor =
-                                                                    MaterialTheme.colorScheme
-                                                                            .onPrimary.copy(
-                                                                            alpha = 0.6f
-                                                                    ),
-                                                            indicatorColor =
-                                                                    MaterialTheme.colorScheme
-                                                                            .onPrimary.copy(
-                                                                            alpha = 0.15f
-                                                                    )
-                                                    )
-                                    )
-                                }
-                            }
-                        }
-                ) { innerPadding ->
-                    when (currentScreen) {
-                        "home" ->
-                                HomeScreen(
-                                        habits = habits,
-                                        onAddHabitClick = onAddHabit,
-                                        onHabitClick = { onEditHabit(it) },
-                                        onDeleteHabit = onDeleteHabit,
-                                        onCompleteHabit = onCompleteHabit,
-                                        completedHabitsToday = completedHabitsToday
-                                )
-                        "statistics" -> StatisticsScreen()
-                        "profile" ->
-                                ProfileScreen(
-                                        user = user,
-                                        onEditClick = onEditProfile,
-                                        onLogoutClick = onLogout
-                                )
-                    }
-                    if (showAddHabitDialog) {
-                        AddHabitDialog(onDismiss = onDismissAddHabit, onSave = onSaveHabit)
-                    }
+            Box(
+                    modifier =
+                            Modifier.fillMaxSize()
+                                    .padding(innerPadding)
+                                    .consumeWindowInsets(innerPadding)
+            ) {
+                when (currentScreen) {
+                    "home" ->
+                            HomeScreen(
+                                    habits = habits,
+                                    onAddHabitClick = onAddHabit,
+                                    onHabitClick = { onEditHabit(it) },
+                                    onDeleteHabit = onDeleteHabit,
+                                    onCompleteHabit = onCompleteHabit,
+                                    completedHabitsToday = completedHabitsToday
+                            )
+                    "statistics" -> StatisticsScreen()
+                    "profile" ->
+                            ProfileScreen(
+                                    user = user,
+                                    onEditClick = onEditProfile,
+                                    onLogoutClick = onLogout
+                            )
+                }
+                if (showAddHabitDialog) {
+                    AddHabitDialog(onDismiss = onDismissAddHabit, onSave = onSaveHabit)
                 }
             }
         }
