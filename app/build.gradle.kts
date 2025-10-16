@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.google.gms.google.services)
 }
 
 android {
@@ -53,6 +54,11 @@ dependencies {
     // Navigation Compose
     implementation("androidx.navigation:navigation-compose:2.7.5")
     
+    // Firebase
+    implementation(platform("com.google.firebase:firebase-bom:33.7.0"))
+    implementation(libs.firebase.firestore)
+    implementation(libs.firebase.auth)
+
     // Room Database
     val roomVersion = "2.6.1"
     implementation("androidx.room:room-runtime:$roomVersion")
