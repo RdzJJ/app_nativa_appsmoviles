@@ -1,86 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Vita Habitos</string>
     
-    <!-- Navigation -->
-    <string name="nav_habits">Hábitos</string>
-    <string name="nav_statistics">Estadísticas</string>
-    <string name="nav_profile">Perfil</string>
-    
-    <!-- Habits -->
-    <string name="habits_title">Mis Hábitos</string>
-    <string name="add_habit">Agregar Hábito</string>
-    <string name="edit_habit">Editar Hábito</string>
-    <string name="delete_habit">Eliminar Hábito</string>
-    <string name="habit_name">Nombre del hábito</string>
-    <string name="habit_description">Descripción</string>
-    <string name="habit_frequency">Frecuencia</string>
-    <string name="habit_reminder">Recordatorio</string>
-    <string name="save_habit">Guardar</string>
-    <string name="cancel">Cancelar</string>
-    
-    <!-- Frequency -->
-    <string name="frequency_daily">Diario</string>
-    <string name="frequency_weekly">Semanal</string>
-    <string name="frequency_monthly">Mensual</string>
-    <string name="frequency_hourly">Cada hora</string>
-    
-    <!-- Statistics -->
-    <string name="statistics_title">Estadísticas</string>
-    <string name="total_habits">Total de hábitos</string>
-    <string name="completed_today">Completados hoy</string>
-    <string name="streak">Racha actual</string>
-    <string name="completion_rate">Tasa de cumplimiento</string>
-    
-    <!-- Login -->
-    <string name="login_title">Bienvenido a Vita Habitos</string>
-    <string name="login_subtitle">Registra y sigue tus hábitos diarios</string>
-    <string name="email">Correo electrónico</string>
-    <string name="password">Contraseña</string>
-    <string name="confirm_password">Confirmar contraseña</string>
-    <string name="sign_in">Iniciar sesión</string>
-    <string name="sign_up">Registrarse</string>
-    <string name="forgot_password">¿Olvidaste tu contraseña?</string>
+    <!-- Login Screen -->
+    <string name="login_title">Bienvenido a Vita</string>
+    <string name="login_subtitle">Gestiona tus hábitos diarios</string>
+    <string name="email_hint">Correo electrónico</string>
+    <string name="password_hint">Contraseña</string>
+    <string name="login_button">Iniciar sesión</string>
+    <string name="signup_button">Registrarse</string>
     <string name="dont_have_account">¿No tienes cuenta?</string>
     <string name="already_have_account">¿Ya tienes cuenta?</string>
     <string name="invalid_email">Correo electrónico inválido</string>
-    <string name="passwords_not_match">Las contraseñas no coinciden</string>
-    <string name="password_too_short">La contraseña debe tener al menos 6 caracteres</string>
+    <string name="invalid_password">La contraseña debe tener al menos 6 caracteres</string>
     
-    <!-- Profile -->
-    <string name="profile_title">Mi Perfil</string>
-    <string name="full_name">Nombre completo</string>
-    <string name="phone">Teléfono</string>
-    <string name="bio">Biografía</string>
+    <!-- Home Screen -->
+    <string name="home_title">Mis Hábitos</string>
+    <string name="add_habit">Agregar Hábito</string>
+    <string name="no_habits">No hay hábitos aún</string>
+    <string name="no_habits_description">Comienza agregando tu primer hábito</string>
+    <string name="habit_name">Nombre del hábito</string>
+    <string name="habit_description">Descripción (opcional)</string>
+    <string name="habit_frequency">Frecuencia</string>
+    <string name="habit_color">Color</string>
+    <string name="daily">Diario</string>
+    <string name="weekly">Semanal</string>
+    <string name="monthly">Mensual</string>
+    <string name="completed_today">Completado hoy</string>
+    <string name="days_streak">días de racha</string>
+    
+    <!-- Profile Tab -->
+    <string name="profile_title">Perfil</string>
+    <string name="user_name">Nombre</string>
+    <string name="user_email">Correo Electrónico</string>
+    <string name="user_bio">Biografía</string>
     <string name="edit_profile">Editar Perfil</string>
-    <string name="logout">Cerrar sesión</string>
-    <string name="total_habits_created">Total de hábitos creados</string>
-    <string name="best_streak">Mejor racha</string>
-    <string name="joined_date">Miembro desde</string>
-    <string name="save_changes">Guardar cambios</string>
-    <string name="profile_updated">Perfil actualizado</string>
-    <string name="logout_confirm">¿Estás seguro de que quieres cerrar sesión?</string>
+    <string name="logout">Cerrar Sesión</string>
+    <string name="preferences">Preferencias</string>
+    <string name="notifications">Notificaciones</string>
+    
+    <!-- Statistics Tab -->
+    <string name="statistics_title">Estadísticas</string>
+    <string name="calendar_view">Vista de Calendario</string>
+    <string name="total_habits">Total de Hábitos</string>
+    <string name="completion_rate">Tasa de Cumplimiento</string>
+    <string name="current_streak">Racha Actual</string>
+    <string name="best_streak">Mejor Racha</string>
+    
+    <!-- Reminders -->
+    <string name="reminders">Recordatorios</string>
+    <string name="add_reminder">Agregar Recordatorio</string>
+    <string name="reminder_time">Hora del Recordatorio</string>
+    <string name="reminder_frequency">Frecuencia</string>
+    <string name="hourly">Cada Hora</string>
+    <string name="reminder_enabled">Recordatorio Habilitado</string>
+    <string name="time_picker">Seleccionar Hora</string>
+    <string name="custom_time">Hora Personalizada</string>
     
     <!-- Common -->
-    <string name="yes">Sí</string>
-    <string name="no">No</string>
-    <string name="ok">OK</string>
+    <string name="ok">Aceptar</string>
+    <string name="cancel">Cancelar</string>
+    <string name="save">Guardar</string>
     <string name="delete">Eliminar</string>
     <string name="edit">Editar</string>
-    <string name="mark_completed">Marcar como completado</string>
-    <string name="mark_incomplete">Marcar como incompleto</string>
-    <string name="settings">Configuración</string>
-    <string name="about">Acerca de</string>
-    
-    <!-- Messages -->
-    <string name="habit_created">Hábito creado exitosamente</string>
-    <string name="habit_updated">Hábito actualizado exitosamente</string>
-    <string name="habit_deleted">Hábito eliminado</string>
-    <string name="confirm_delete">¿Estás seguro de que quieres eliminar este hábito?</string>
-    <string name="no_habits">No tienes hábitos creados aún</string>
-    <string name="create_first_habit">Crea tu primer hábito para comenzar</string>
-    <string name="login_success">¡Inicio de sesión exitoso!</string>
-    <string name="signup_success">¡Cuenta creada exitosamente!</string>
-    <string name="error_login">Error al iniciar sesión</string>
-    <string name="error_signup">Error al crear la cuenta</string>
+    <string name="loading">Cargando...</string>
+    <string name="error">Error</string>
+    <string name="success">Éxito</string>
 </resources>
-

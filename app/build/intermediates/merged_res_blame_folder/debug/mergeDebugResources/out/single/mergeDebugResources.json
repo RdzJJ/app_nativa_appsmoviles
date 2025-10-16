@@ -1,50 +1,66 @@
 [
     {
-        "merged": "com.habitsapp-debug-52:/mipmap-xxxhdpi_ic_launcher_round.png.flat",
-        "source": "com.habitsapp-main-54:/mipmap-xxxhdpi/ic_launcher_round.png"
+        "merged": "co.edu.upb.vitahabittracker.app-debug-71:/mipmap-hdpi_ic_launcher_round.webp.flat",
+        "source": "co.edu.upb.vitahabittracker.app-main-73:/mipmap-hdpi/ic_launcher_round.webp"
     },
     {
-        "merged": "com.habitsapp-debug-52:/xml_backup_rules.xml.flat",
-        "source": "com.habitsapp-main-54:/xml/backup_rules.xml"
+        "merged": "co.edu.upb.vitahabittracker.app-debug-71:/mipmap-xhdpi_ic_launcher_round.webp.flat",
+        "source": "co.edu.upb.vitahabittracker.app-main-73:/mipmap-xhdpi/ic_launcher_round.webp"
     },
     {
-        "merged": "com.habitsapp-debug-52:/mipmap-xxhdpi_ic_launcher_round.png.flat",
-        "source": "com.habitsapp-main-54:/mipmap-xxhdpi/ic_launcher_round.png"
+        "merged": "co.edu.upb.vitahabittracker.app-debug-71:/mipmap-hdpi_ic_launcher.webp.flat",
+        "source": "co.edu.upb.vitahabittracker.app-main-73:/mipmap-hdpi/ic_launcher.webp"
     },
     {
-        "merged": "com.habitsapp-debug-52:/xml_data_extraction_rules.xml.flat",
-        "source": "com.habitsapp-main-54:/xml/data_extraction_rules.xml"
+        "merged": "co.edu.upb.vitahabittracker.app-debug-71:/mipmap-xxhdpi_ic_launcher_round.webp.flat",
+        "source": "co.edu.upb.vitahabittracker.app-main-73:/mipmap-xxhdpi/ic_launcher_round.webp"
     },
     {
-        "merged": "com.habitsapp-debug-52:/mipmap-xhdpi_ic_launcher_round.png.flat",
-        "source": "com.habitsapp-main-54:/mipmap-xhdpi/ic_launcher_round.png"
+        "merged": "co.edu.upb.vitahabittracker.app-debug-71:/mipmap-anydpi_ic_launcher.xml.flat",
+        "source": "co.edu.upb.vitahabittracker.app-main-73:/mipmap-anydpi/ic_launcher.xml"
     },
     {
-        "merged": "com.habitsapp-debug-52:/mipmap-mdpi_ic_launcher.png.flat",
-        "source": "com.habitsapp-main-54:/mipmap-mdpi/ic_launcher.png"
+        "merged": "co.edu.upb.vitahabittracker.app-debug-71:/xml_backup_rules.xml.flat",
+        "source": "co.edu.upb.vitahabittracker.app-main-73:/xml/backup_rules.xml"
     },
     {
-        "merged": "com.habitsapp-debug-52:/mipmap-xhdpi_ic_launcher.png.flat",
-        "source": "com.habitsapp-main-54:/mipmap-xhdpi/ic_launcher.png"
+        "merged": "co.edu.upb.vitahabittracker.app-debug-71:/mipmap-xhdpi_ic_launcher.webp.flat",
+        "source": "co.edu.upb.vitahabittracker.app-main-73:/mipmap-xhdpi/ic_launcher.webp"
     },
     {
-        "merged": "com.habitsapp-debug-52:/mipmap-hdpi_ic_launcher_round.png.flat",
-        "source": "com.habitsapp-main-54:/mipmap-hdpi/ic_launcher_round.png"
+        "merged": "co.edu.upb.vitahabittracker.app-debug-71:/mipmap-xxxhdpi_ic_launcher_round.webp.flat",
+        "source": "co.edu.upb.vitahabittracker.app-main-73:/mipmap-xxxhdpi/ic_launcher_round.webp"
     },
     {
-        "merged": "com.habitsapp-debug-52:/mipmap-hdpi_ic_launcher.png.flat",
-        "source": "com.habitsapp-main-54:/mipmap-hdpi/ic_launcher.png"
+        "merged": "co.edu.upb.vitahabittracker.app-debug-71:/drawable_ic_launcher_background.xml.flat",
+        "source": "co.edu.upb.vitahabittracker.app-main-73:/drawable/ic_launcher_background.xml"
     },
     {
-        "merged": "com.habitsapp-debug-52:/mipmap-xxhdpi_ic_launcher.png.flat",
-        "source": "com.habitsapp-main-54:/mipmap-xxhdpi/ic_launcher.png"
+        "merged": "co.edu.upb.vitahabittracker.app-debug-71:/drawable_ic_launcher_foreground.xml.flat",
+        "source": "co.edu.upb.vitahabittracker.app-main-73:/drawable/ic_launcher_foreground.xml"
     },
     {
-        "merged": "com.habitsapp-debug-52:/mipmap-mdpi_ic_launcher_round.png.flat",
-        "source": "com.habitsapp-main-54:/mipmap-mdpi/ic_launcher_round.png"
+        "merged": "co.edu.upb.vitahabittracker.app-debug-71:/mipmap-mdpi_ic_launcher.webp.flat",
+        "source": "co.edu.upb.vitahabittracker.app-main-73:/mipmap-mdpi/ic_launcher.webp"
     },
     {
-        "merged": "com.habitsapp-debug-52:/mipmap-xxxhdpi_ic_launcher.png.flat",
-        "source": "com.habitsapp-main-54:/mipmap-xxxhdpi/ic_launcher.png"
+        "merged": "co.edu.upb.vitahabittracker.app-debug-71:/mipmap-xxhdpi_ic_launcher.webp.flat",
+        "source": "co.edu.upb.vitahabittracker.app-main-73:/mipmap-xxhdpi/ic_launcher.webp"
+    },
+    {
+        "merged": "co.edu.upb.vitahabittracker.app-debug-71:/mipmap-mdpi_ic_launcher_round.webp.flat",
+        "source": "co.edu.upb.vitahabittracker.app-main-73:/mipmap-mdpi/ic_launcher_round.webp"
+    },
+    {
+        "merged": "co.edu.upb.vitahabittracker.app-debug-71:/mipmap-anydpi_ic_launcher_round.xml.flat",
+        "source": "co.edu.upb.vitahabittracker.app-main-73:/mipmap-anydpi/ic_launcher_round.xml"
+    },
+    {
+        "merged": "co.edu.upb.vitahabittracker.app-debug-71:/mipmap-xxxhdpi_ic_launcher.webp.flat",
+        "source": "co.edu.upb.vitahabittracker.app-main-73:/mipmap-xxxhdpi/ic_launcher.webp"
+    },
+    {
+        "merged": "co.edu.upb.vitahabittracker.app-debug-71:/xml_data_extraction_rules.xml.flat",
+        "source": "co.edu.upb.vitahabittracker.app-main-73:/xml/data_extraction_rules.xml"
     }
 ]
