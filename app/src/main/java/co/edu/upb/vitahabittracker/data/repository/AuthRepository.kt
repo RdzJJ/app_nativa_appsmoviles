@@ -1,71 +1,164 @@
 package co.edu.upb.vitahabittracker.data.repository
 
 import co.edu.upb.vitahabittracker.data.models.User
-import kotlinx.coroutines.delay
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.UserProfileChangeRequest
+import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.tasks.await
 
 class AuthRepository {
+    private val auth = FirebaseAuth.getInstance()
+    private val firestore = FirebaseFirestore.getInstance()
+
     suspend fun login(email: String, password: String): Result<User> {
         return try {
-            // Simulate API call
-            delay(1000)
-            
-            // Dummy validation
             if (email.isEmpty() || password.isEmpty()) {
-                Result.failure(Exception("Email and password are required"))
-            } else if (!email.contains("@")) {
-                Result.failure(Exception("Invalid email format"))
-            } else if (password.length < 6) {
-                Result.failure(Exception("Password must be at least 6 characters"))
-            } else {
-                // Dummy user creation - in real app this would come from Firebase
-                val user = User(
-                    id = "dummy_${System.currentTimeMillis()}",
-                    name = email.substringBefore("@"),
-                    email = email,
-                    bio = "Nuevo usuario de Vita Habitos",
-                    joinDate = java.time.LocalDate.now().toString()
-                )
-                Result.success(user)
+                return Result.failure(Exception("El correo y la contraseña son obligatorios"))
             }
+            if (!email.contains("@")) {
+                return Result.failure(Exception("Formato de correo inválido"))
+            }
+            if (password.length < 6) {
+                return Result.failure(Exception("La contraseña debe tener al menos 6 caracteres"))
+            }
+
+            val authResult = auth.signInWithEmailAndPassword(email, password).await()
+            val firebaseUser = authResult.user ?: throw Exception("Error al iniciar sesión")
+
+            // Get user data from Firestore
+            val userDoc = firestore.collection("users").document(firebaseUser.uid).get().await()
+
+            val user =
+                    if (userDoc.exists()) {
+                        User(
+                                id = firebaseUser.uid,
+                                name = userDoc.getString("name")
+                                                ?: firebaseUser.displayName
+                                                        ?: email.substringBefore("@"),
+                                email = firebaseUser.email ?: email,
+                                bio = userDoc.getString("bio") ?: "Nuevo usuario de Vita Habitos",
+                                joinDate = userDoc.getString("joinDate")
+                                                ?: java.time.LocalDate.now().toString()
+                        )
+                    } else {
+                        // Create user document if it doesn't exist
+                        val newUser =
+                                User(
+                                        id = firebaseUser.uid,
+                                        name = firebaseUser.displayName
+                                                        ?: email.substringBefore("@"),
+                                        email = firebaseUser.email ?: email,
+                                        bio = "Nuevo usuario de Vita Habitos",
+                                        joinDate = java.time.LocalDate.now().toString()
+                                )
+                        saveUserToFirestore(newUser)
+                        newUser
+                    }
+
+            Result.success(user)
         } catch (e: Exception) {
-            Result.failure(e)
+            val errorMessage =
+                    when {
+                        e.message?.contains("password", ignoreCase = true) == true ||
+                                e.message?.contains(
+                                        "INVALID_LOGIN_CREDENTIALS",
+                                        ignoreCase = true
+                                ) == true ||
+                                e.message?.contains("wrong-password", ignoreCase = true) == true ||
+                                e.message?.contains("user-not-found", ignoreCase = true) == true ||
+                                e.message?.contains("invalid-credential", ignoreCase = true) ==
+                                        true -> "Correo o contraseña incorrectos"
+                        e.message?.contains("network", ignoreCase = true) == true ->
+                                "Error de conexión. Verifica tu internet"
+                        e.message?.contains("too-many-requests", ignoreCase = true) == true ->
+                                "Demasiados intentos. Intenta más tarde"
+                        e.message?.contains("user-disabled", ignoreCase = true) == true ->
+                                "Esta cuenta ha sido deshabilitada"
+                        else -> "Correo o contraseña incorrectos"
+                    }
+            Result.failure(Exception(errorMessage))
         }
     }
 
     suspend fun signup(email: String, password: String, name: String): Result<User> {
         return try {
-            // Simulate API call
-            delay(1500)
-            
-            // Dummy validation
             if (email.isEmpty() || password.isEmpty() || name.isEmpty()) {
-                Result.failure(Exception("All fields are required"))
-            } else if (!email.contains("@")) {
-                Result.failure(Exception("Invalid email format"))
-            } else if (password.length < 6) {
-                Result.failure(Exception("Password must be at least 6 characters"))
-            } else {
-                // Dummy user creation
-                val user = User(
-                    id = "dummy_${System.currentTimeMillis()}",
-                    name = name,
-                    email = email,
-                    bio = "Nuevo usuario de Vita Habitos",
-                    joinDate = java.time.LocalDate.now().toString()
-                )
-                Result.success(user)
+                return Result.failure(Exception("Todos los campos son obligatorios"))
             }
+            if (!email.contains("@")) {
+                return Result.failure(Exception("Formato de correo inválido"))
+            }
+            if (password.length < 6) {
+                return Result.failure(Exception("La contraseña debe tener al menos 6 caracteres"))
+            }
+
+            val authResult = auth.createUserWithEmailAndPassword(email, password).await()
+            val firebaseUser = authResult.user ?: throw Exception("Error al crear la cuenta")
+
+            // Update Firebase Auth profile
+            val profileUpdates = UserProfileChangeRequest.Builder().setDisplayName(name).build()
+            firebaseUser.updateProfile(profileUpdates).await()
+
+            // Create user in Firestore
+            val user =
+                    User(
+                            id = firebaseUser.uid,
+                            name = name,
+                            email = firebaseUser.email ?: email,
+                            bio = "Nuevo usuario de Vita Habitos",
+                            joinDate = java.time.LocalDate.now().toString()
+                    )
+
+            saveUserToFirestore(user)
+            Result.success(user)
+        } catch (e: Exception) {
+            val errorMessage =
+                    when {
+                        e.message?.contains("email-already-in-use", ignoreCase = true) == true ||
+                                e.message?.contains("already in use", ignoreCase = true) == true ->
+                                "Este correo ya está registrado"
+                        e.message?.contains("invalid-email", ignoreCase = true) == true ->
+                                "Correo electrónico inválido"
+                        e.message?.contains("weak-password", ignoreCase = true) == true ->
+                                "La contraseña es muy débil"
+                        e.message?.contains("network", ignoreCase = true) == true ->
+                                "Error de conexión. Verifica tu internet"
+                        e.message?.contains("too-many-requests", ignoreCase = true) == true ->
+                                "Demasiados intentos. Intenta más tarde"
+                        else -> "Error al crear la cuenta. Intenta de nuevo"
+                    }
+            Result.failure(Exception(errorMessage))
+        }
+    }
+
+    private suspend fun saveUserToFirestore(user: User) {
+        val userData =
+                hashMapOf(
+                        "name" to user.name,
+                        "email" to user.email,
+                        "bio" to user.bio,
+                        "joinDate" to user.joinDate
+                )
+        firestore.collection("users").document(user.id).set(userData).await()
+    }
+
+    suspend fun logout(): Result<Unit> {
+        return try {
+            auth.signOut()
+            Result.success(Unit)
         } catch (e: Exception) {
             Result.failure(e)
         }
     }
 
-    suspend fun logout(): Result<Unit> {
-        return try {
-            delay(500)
-            Result.success(Unit)
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
+    fun getCurrentUser(): User? {
+        val firebaseUser = auth.currentUser ?: return null
+        return User(
+                id = firebaseUser.uid,
+                name = firebaseUser.displayName ?: "",
+                email = firebaseUser.email ?: "",
+                bio = "",
+                joinDate = ""
+        )
     }
 }
