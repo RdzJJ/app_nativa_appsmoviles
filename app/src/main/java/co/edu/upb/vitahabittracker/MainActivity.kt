@@ -95,6 +95,7 @@ fun VitaHabitosApp() {
         var showEditProfileDialog by remember { mutableStateOf(false) }
         var completedHabitsToday by remember { mutableStateOf<Set<Int>>(emptySet()) }
         var showEditHabitDialog by remember { mutableStateOf(false) }
+        var isProcessingHabit by remember { mutableStateOf(false) }
 
         // Initialize repositories and load data when user logs in
         LaunchedEffect(currentUser?.id) {
@@ -293,57 +294,90 @@ fun VitaHabitosApp() {
                                         finishDate,
                                         weekday,
                                         monthday ->
-                                        coroutineScope.launch {
-                                                if (showEditHabitDialog && editingHabit != null) {
-                                                        // Update existing habit in Firestore
-                                                        val updatedHabit =
-                                                                editingHabit!!.copy(
-                                                                        name = name,
-                                                                        description = description,
-                                                                        frequency = frequency,
-                                                                        reminderTime = reminderTime,
-                                                                        finishDate = finishDate,
-                                                                        scheduledWeekday = weekday,
-                                                                        scheduledMonthday = monthday
-                                                                )
-                                                        habitRepository?.updateHabit(updatedHabit)
-                                                        showEditHabitDialog = false
-                                                        editingHabit = null
+                                        if (!isProcessingHabit) {
+                                                isProcessingHabit = true
+                                                coroutineScope.launch {
+                                                        try {
+                                                                if (showEditHabitDialog &&
+                                                                                editingHabit != null
+                                                                ) {
+                                                                        // Update existing habit in
+                                                                        // Firestore
+                                                                        val updatedHabit =
+                                                                                editingHabit!!.copy(
+                                                                                        name = name,
+                                                                                        description =
+                                                                                                description,
+                                                                                        frequency =
+                                                                                                frequency,
+                                                                                        reminderTime =
+                                                                                                reminderTime,
+                                                                                        finishDate =
+                                                                                                finishDate,
+                                                                                        scheduledWeekday =
+                                                                                                weekday,
+                                                                                        scheduledMonthday =
+                                                                                                monthday
+                                                                                )
+                                                                        habitRepository
+                                                                                ?.updateHabit(
+                                                                                        updatedHabit
+                                                                                )
+                                                                        showEditHabitDialog = false
+                                                                        editingHabit = null
 
-                                                        // Reschedule notification
-                                                        notificationScheduler.cancelHabitReminder(
-                                                                updatedHabit.id
-                                                        )
-                                                        if (reminderTime != null) {
-                                                                notificationScheduler
-                                                                        .scheduleHabitReminder(
-                                                                                updatedHabit
-                                                                        )
-                                                        }
-                                                } else {
-                                                        // Create new habit in Firestore
-                                                        val newHabit =
-                                                                Habit(
-                                                                        id =
-                                                                                System.currentTimeMillis()
-                                                                                        .toInt(),
-                                                                        name = name,
-                                                                        description = description,
-                                                                        frequency = frequency,
-                                                                        reminderTime = reminderTime,
-                                                                        finishDate = finishDate,
-                                                                        scheduledWeekday = weekday,
-                                                                        scheduledMonthday = monthday
-                                                                )
-                                                        habitRepository?.addHabit(newHabit)
-                                                        showAddHabitDialog = false
-
-                                                        // Schedule notification if reminder is set
-                                                        if (reminderTime != null) {
-                                                                notificationScheduler
-                                                                        .scheduleHabitReminder(
+                                                                        // Reschedule notification
+                                                                        notificationScheduler
+                                                                                .cancelHabitReminder(
+                                                                                        updatedHabit
+                                                                                                .id
+                                                                                )
+                                                                        if (reminderTime != null) {
+                                                                                notificationScheduler
+                                                                                        .scheduleHabitReminder(
+                                                                                                updatedHabit
+                                                                                        )
+                                                                        }
+                                                                } else {
+                                                                        // Create new habit in
+                                                                        // Firestore
+                                                                        val newHabit =
+                                                                                Habit(
+                                                                                        id =
+                                                                                                java.util
+                                                                                                        .UUID
+                                                                                                        .randomUUID()
+                                                                                                        .hashCode(),
+                                                                                        name = name,
+                                                                                        description =
+                                                                                                description,
+                                                                                        frequency =
+                                                                                                frequency,
+                                                                                        reminderTime =
+                                                                                                reminderTime,
+                                                                                        finishDate =
+                                                                                                finishDate,
+                                                                                        scheduledWeekday =
+                                                                                                weekday,
+                                                                                        scheduledMonthday =
+                                                                                                monthday
+                                                                                )
+                                                                        habitRepository?.addHabit(
                                                                                 newHabit
                                                                         )
+                                                                        showAddHabitDialog = false
+
+                                                                        // Schedule notification if
+                                                                        // reminder is set
+                                                                        if (reminderTime != null) {
+                                                                                notificationScheduler
+                                                                                        .scheduleHabitReminder(
+                                                                                                newHabit
+                                                                                        )
+                                                                        }
+                                                                }
+                                                        } finally {
+                                                                isProcessingHabit = false
                                                         }
                                                 }
                                         }

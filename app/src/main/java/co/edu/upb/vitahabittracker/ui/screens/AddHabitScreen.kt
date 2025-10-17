@@ -369,6 +369,10 @@ fun AddHabitDialog(
                                         Button(
                                                 onClick = {
                                                         if (habitName.isNotBlank()) {
+                                                                // Dismiss first to prevent
+                                                                // duplicate calls
+                                                                onDismiss()
+
                                                                 val reminderTime =
                                                                         if (enableReminder) {
                                                                                 String.format(
@@ -563,7 +567,7 @@ fun WeekdaySelectorRow(selectedWeekday: Int, onWeekdaySelected: (Int) -> Unit) {
                         for (i in 0 until 7) {
                                 Surface(
                                         modifier =
-                                                Modifier.size(48.dp).clickable {
+                                                Modifier.size(40.dp).clickable {
                                                         onWeekdaySelected(i)
                                                 },
                                         shape = androidx.compose.foundation.shape.CircleShape,
@@ -577,7 +581,7 @@ fun WeekdaySelectorRow(selectedWeekday: Int, onWeekdaySelected: (Int) -> Unit) {
                                         ) {
                                                 Text(
                                                         text = daysOfWeek[i],
-                                                        fontSize = 16.sp,
+                                                        fontSize = 14.sp,
                                                         fontWeight = FontWeight.Bold,
                                                         color =
                                                                 if (selectedWeekday == i)
