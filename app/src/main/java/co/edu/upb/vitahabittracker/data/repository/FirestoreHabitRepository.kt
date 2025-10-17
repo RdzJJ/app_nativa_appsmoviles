@@ -47,7 +47,11 @@ class FirestoreHabitRepository(private val userId: String) {
                                                     ),
                                             isActive = doc.getBoolean("isActive") ?: true,
                                             reminderTime = doc.getString("reminderTime"),
-                                            finishDate = doc.getString("finishDate")
+                                            finishDate = doc.getString("finishDate"),
+                                            scheduledWeekday =
+                                                    doc.getLong("scheduledWeekday")?.toInt(),
+                                            scheduledMonthday =
+                                                    doc.getLong("scheduledMonthday")?.toInt()
                                     )
                                 } catch (e: Exception) {
                                     null
@@ -81,7 +85,9 @@ class FirestoreHabitRepository(private val userId: String) {
                                     ),
                             isActive = doc.getBoolean("isActive") ?: true,
                             reminderTime = doc.getString("reminderTime"),
-                            finishDate = doc.getString("finishDate")
+                            finishDate = doc.getString("finishDate"),
+                            scheduledWeekday = doc.getLong("scheduledWeekday")?.toInt(),
+                            scheduledMonthday = doc.getLong("scheduledMonthday")?.toInt()
                     )
                 } catch (e: Exception) {
                     null
@@ -104,7 +110,9 @@ class FirestoreHabitRepository(private val userId: String) {
                             "createdAt" to habit.createdAt.toString(),
                             "isActive" to habit.isActive,
                             "reminderTime" to habit.reminderTime,
-                            "finishDate" to habit.finishDate
+                            "finishDate" to habit.finishDate,
+                            "scheduledWeekday" to habit.scheduledWeekday,
+                            "scheduledMonthday" to habit.scheduledMonthday
                     )
 
             val docRef = habitsCollection.document(habit.id.toString())
@@ -128,7 +136,9 @@ class FirestoreHabitRepository(private val userId: String) {
                             "icon" to habit.icon,
                             "isActive" to habit.isActive,
                             "reminderTime" to habit.reminderTime,
-                            "finishDate" to habit.finishDate
+                            "finishDate" to habit.finishDate,
+                            "scheduledWeekday" to habit.scheduledWeekday,
+                            "scheduledMonthday" to habit.scheduledMonthday
                     )
 
             habitsCollection
@@ -143,8 +153,8 @@ class FirestoreHabitRepository(private val userId: String) {
 
     suspend fun deleteHabit(habitId: Int): Result<Unit> {
         return try {
-            // Soft delete - mark as inactive
-            habitsCollection.document(habitId.toString()).update("isActive", false).await()
+            // Hard delete - permanently remove from Firestore
+            habitsCollection.document(habitId.toString()).delete().await()
             Result.success(Unit)
         } catch (e: Exception) {
             Result.failure(e)
