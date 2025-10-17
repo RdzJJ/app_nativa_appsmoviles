@@ -22,3 +22,12 @@ Permite a los usuarios registrar sus rutinas, consultar estadísticas de progres
 - **Backend:** Firebase Authentication y Firebase Realtime Database
 - **Diseño:** Prototipado en Figma 
 - **Integración:** Sincronización en tiempo real entre vistas y datos del usuario
+
+## 📱 Estructura de pantallas
+
+1. **Login:** Acceso de usuarios registrados.  
+2. **Sign Up:** Registro de nuevos usuarios.  
+3. **Inicio:** Vista principal con hábitos creados.  
+4. **Crear hábito:** Formulario para añadir un nuevo hábito.  
+5. **Estadísticas:** Visualización del progreso en gráficos.  
+6. **Perfil:** Información básica del usuario.
