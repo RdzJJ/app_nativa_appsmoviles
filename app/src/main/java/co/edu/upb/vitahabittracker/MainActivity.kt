@@ -608,7 +608,8 @@ fun MainAppScreen(
                                                         onHabitClick = { onEditHabit(it) },
                                                         onDeleteHabit = onDeleteHabit,
                                                         onCompleteHabit = onCompleteHabit,
-                                                        completedHabitsToday = completedHabitsToday
+                                                        completedHabitsToday = completedHabitsToday,
+                                                        userName = user?.name ?: "Usuario"
                                                 )
                                         "statistics" ->
                                                 StatisticsScreen(
