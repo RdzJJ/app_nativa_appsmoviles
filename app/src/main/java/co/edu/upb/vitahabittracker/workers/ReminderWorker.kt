@@ -13,7 +13,7 @@ class ReminderWorker(context: Context, params: WorkerParameters) : Worker(contex
 
             if (habitId != -1) {
                 val notificationManager = NotificationManager(applicationContext)
-                notificationManager.showReminderNotification(habitName, habitId)
+                notificationManager.showReminderNotification(habitName, habitId, habitId)
             }
             Result.success()
         } catch (e: Exception) {

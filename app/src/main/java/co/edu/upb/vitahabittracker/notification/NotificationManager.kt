@@ -2,7 +2,9 @@ package co.edu.upb.vitahabittracker.notification
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.Context
+import android.content.Intent
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import co.edu.upb.vitahabittracker.R
@@ -36,13 +38,50 @@ class NotificationManager(private val context: Context) {
         }
     }
 
-    fun showReminderNotification(habitName: String, notificationId: Int = REMINDER_NOTIFICATION_ID) {
+    fun showReminderNotification(habitName: String, habitId: Int, notificationId: Int = REMINDER_NOTIFICATION_ID) {
+        // Create intent for completing the habit
+        val completeIntent = Intent(context, HabitNotificationReceiver::class.java).apply {
+            action = HabitNotificationReceiver.ACTION_COMPLETE_HABIT
+            putExtra(HabitNotificationReceiver.EXTRA_HABIT_ID, habitId)
+            putExtra(HabitNotificationReceiver.EXTRA_HABIT_NAME, habitName)
+        }
+        
+        val completePendingIntent = PendingIntent.getBroadcast(
+            context,
+            habitId,
+            completeIntent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+
+        // Create intent for dismissing the notification
+        val dismissIntent = Intent(context, HabitNotificationReceiver::class.java).apply {
+            action = HabitNotificationReceiver.ACTION_DISMISS_NOTIFICATION
+            putExtra(HabitNotificationReceiver.EXTRA_HABIT_ID, habitId)
+        }
+        
+        val dismissPendingIntent = PendingIntent.getBroadcast(
+            context,
+            habitId + 1000,
+            dismissIntent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+
         val notification = NotificationCompat.Builder(context, REMINDER_CHANNEL_ID)
             .setSmallIcon(android.R.drawable.ic_dialog_info)
             .setContentTitle("Recordatorio de Hábito")
             .setContentText("¡Es hora de registrar: $habitName!")
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setAutoCancel(true)
+            .addAction(
+                android.R.drawable.ic_menu_agenda,
+                "Completar",
+                completePendingIntent
+            )
+            .addAction(
+                android.R.drawable.ic_menu_close_clear_cancel,
+                "Más tarde",
+                dismissPendingIntent
+            )
             .build()
 
         notificationManager.notify(notificationId, notification)
@@ -58,6 +97,22 @@ class NotificationManager(private val context: Context) {
             .build()
 
         notificationManager.notify(notificationId, notification)
+    }
+
+    fun showAlreadyCompletedNotification(habitName: String, notificationId: Int = HABIT_NOTIFICATION_ID) {
+        val notification = NotificationCompat.Builder(context, HABIT_CHANNEL_ID)
+            .setSmallIcon(android.R.drawable.ic_dialog_info)
+            .setContentTitle("Ya completado")
+            .setContentText("$habitName ya fue registrado hoy.")
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .setAutoCancel(true)
+            .build()
+
+        notificationManager.notify(notificationId, notification)
+    }
+
+    fun cancelNotification(notificationId: Int) {
+        notificationManager.cancel(notificationId)
     }
 
     companion object {

@@ -137,4 +137,27 @@ class FirestoreHabitEntryRepository(private val userId: String) {
             Result.failure(e)
         }
     }
+
+    suspend fun getHabitEntriesForDate(date: LocalDate): List<HabitEntry> {
+        return try {
+            val snapshot = entriesCollection.whereEqualTo("completedDate", date.toString()).get().await()
+            snapshot.documents.mapNotNull { doc ->
+                try {
+                    HabitEntry(
+                        id = doc.id.toIntOrNull() ?: 0,
+                        habitId = doc.getLong("habitId")?.toInt() ?: 0,
+                        completedDate = LocalDate.parse(
+                            doc.getString("completedDate") ?: LocalDate.now().toString()
+                        ),
+                        completedTime = doc.getString("completedTime") ?: "",
+                        notes = doc.getString("notes") ?: ""
+                    )
+                } catch (e: Exception) {
+                    null
+                }
+            }
+        } catch (e: Exception) {
+            emptyList()
+        }
+    }
 }
