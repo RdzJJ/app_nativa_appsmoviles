@@ -156,4 +156,63 @@ class AuthRepository {
                 joinDate = ""
         )
     }
+
+    suspend fun updateUserProfile(newName: String): Result<Unit> {
+        return try {
+            if (newName.isEmpty()) {
+                return Result.failure(Exception("El nombre no puede estar vacío"))
+            }
+
+            val firebaseUser = auth.currentUser ?: throw Exception("No hay usuario autenticado")
+
+            // Update Firebase Auth display name
+            val profileUpdates = UserProfileChangeRequest.Builder().setDisplayName(newName).build()
+            firebaseUser.updateProfile(profileUpdates).await()
+
+            // Update Firestore
+            firestore.collection("users").document(firebaseUser.uid).update(mapOf("name" to newName)).await()
+
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    suspend fun changePassword(currentPassword: String, newPassword: String): Result<Unit> {
+        return try {
+            if (currentPassword.isEmpty() || newPassword.isEmpty()) {
+                return Result.failure(Exception("Todos los campos son obligatorios"))
+            }
+            if (newPassword.length < 6) {
+                return Result.failure(Exception("La nueva contraseña debe tener al menos 6 caracteres"))
+            }
+            if (currentPassword == newPassword) {
+                return Result.failure(Exception("La nueva contraseña debe ser diferente a la actual"))
+            }
+
+            val firebaseUser = auth.currentUser ?: throw Exception("No hay usuario autenticado")
+            val email = firebaseUser.email ?: throw Exception("No se pudo obtener el correo del usuario")
+
+            // Re-authenticate with current password
+            val credential = com.google.firebase.auth.EmailAuthProvider.getCredential(email, currentPassword)
+            firebaseUser.reauthenticate(credential).await()
+
+            // Update password
+            firebaseUser.updatePassword(newPassword).await()
+
+            Result.success(Unit)
+        } catch (e: Exception) {
+            val errorMessage = when {
+                e.message?.contains("wrong-password", ignoreCase = true) == true ||
+                        e.message?.contains("INVALID_LOGIN_CREDENTIALS", ignoreCase = true) == true ->
+                    "La contraseña actual es incorrecta"
+                e.message?.contains("weak-password", ignoreCase = true) == true ->
+                    "La nueva contraseña es muy débil"
+                e.message?.contains("network", ignoreCase = true) == true ->
+                    "Error de conexión. Verifica tu internet"
+                else -> e.message ?: "Error al cambiar la contraseña"
+            }
+            Result.failure(Exception(errorMessage))
+        }
+    }
 }
