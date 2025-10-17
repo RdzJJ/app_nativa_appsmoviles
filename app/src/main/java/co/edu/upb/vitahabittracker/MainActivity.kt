@@ -59,9 +59,9 @@ import java.time.LocalTime
 import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
-        override fun onCreate(savedInstanceState: Bundle?) {
-                super.onCreate(savedInstanceState)
-                enableEdgeToEdge()
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
                 setContent { VitaHabitosTheme { VitaHabitosApp() } }
         }
 }
@@ -657,7 +657,7 @@ fun MainAppScreen(
                                                         habitEntries = habitEntries
                                                 )
                                         "profile" ->
-                                                ProfileScreen(user = user, onLogoutClick = onLogout)
+                                                ProfileScreen(user = user, onLogoutClick = onLogout, habits = habits, habitEntries = habitEntries)
                                 }
                                 if (showAddHabitDialog) {
                                         AddHabitDialog(
@@ -665,9 +665,9 @@ fun MainAppScreen(
                                                 onSave = onSaveHabit,
                                                 initialHabit = editingHabit,
                                                 isEditing = editingHabit != null
-                                        )
-                                }
-                        }
+                    )
                 }
+            }
         }
+    }
 }
