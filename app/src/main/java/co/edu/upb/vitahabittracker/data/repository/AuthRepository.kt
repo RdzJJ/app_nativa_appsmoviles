@@ -36,7 +36,6 @@ class AuthRepository {
                                                 ?: firebaseUser.displayName
                                                         ?: email.substringBefore("@"),
                                 email = firebaseUser.email ?: email,
-                                bio = userDoc.getString("bio") ?: "Nuevo usuario de Vita Habitos",
                                 joinDate = userDoc.getString("joinDate")
                                                 ?: java.time.LocalDate.now().toString()
                         )
@@ -48,7 +47,6 @@ class AuthRepository {
                                         name = firebaseUser.displayName
                                                         ?: email.substringBefore("@"),
                                         email = firebaseUser.email ?: email,
-                                        bio = "Nuevo usuario de Vita Habitos",
                                         joinDate = java.time.LocalDate.now().toString()
                                 )
                         saveUserToFirestore(newUser)
@@ -105,7 +103,6 @@ class AuthRepository {
                             id = firebaseUser.uid,
                             name = name,
                             email = firebaseUser.email ?: email,
-                            bio = "Nuevo usuario de Vita Habitos",
                             joinDate = java.time.LocalDate.now().toString()
                     )
 
@@ -136,7 +133,6 @@ class AuthRepository {
                 hashMapOf(
                         "name" to user.name,
                         "email" to user.email,
-                        "bio" to user.bio,
                         "joinDate" to user.joinDate
                 )
         firestore.collection("users").document(user.id).set(userData).await()
@@ -157,7 +153,6 @@ class AuthRepository {
                 id = firebaseUser.uid,
                 name = firebaseUser.displayName ?: "",
                 email = firebaseUser.email ?: "",
-                bio = "",
                 joinDate = ""
         )
     }
