@@ -25,8 +25,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import co.edu.upb.vitahabittracker.R
 import co.edu.upb.vitahabittracker.data.models.Habit
+import co.edu.upb.vitahabittracker.data.models.HabitFrequency
 import co.edu.upb.vitahabittracker.ui.theme.BluePrimary
 import co.edu.upb.vitahabittracker.ui.theme.GreenPrimary
+import java.time.LocalDate
+import java.time.DayOfWeek
+import androidx.compose.foundation.clickable
 
 @Composable
 fun HomeScreen(
@@ -40,6 +44,15 @@ fun HomeScreen(
 ) {
     var habitToDelete by remember { mutableStateOf<Habit?>(null) }
     var showDeleteDialog by remember { mutableStateOf(false) }
+
+    // Filter habits for today and habits for other days
+    val habitsForToday = remember(habits) {
+        habits.filter { isHabitScheduledForToday(it) }
+    }
+    
+    val habitsForOtherDays = remember(habits) {
+        habits.filter { !isHabitScheduledForToday(it) }
+    }
 
     Box(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
         Column(modifier = Modifier.fillMaxSize()) {
@@ -123,18 +136,58 @@ fun HomeScreen(
                     }
                 } else {
                     LazyColumn(modifier = Modifier.fillMaxSize()) {
-                        items(habits) { habit ->
-                            HabitCard(
-                                habit = habit,
-                                onClick = { onHabitClick(habit) },
-                                onDelete = {
-                                    habitToDelete = habit
-                                    showDeleteDialog = true
-                                },
-                                onComplete = { onCompleteHabit(habit) },
-                                isCompletedToday = completedHabitsToday.contains(habit.id)
-                            )
+                        // Hábitos para hoy
+                        if (habitsForToday.isNotEmpty()) {
+                            item {
+                                Text(
+                                    text = "Hoy",
+                                    fontSize = 16.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = MaterialTheme.colorScheme.onBackground,
+                                    modifier = Modifier.padding(bottom = 12.dp, top = 8.dp)
+                                )
+                            }
+                            items(habitsForToday) { habit ->
+                                HabitCard(
+                                    habit = habit,
+                                    onClick = { onHabitClick(habit) },
+                                    onDelete = {
+                                        habitToDelete = habit
+                                        showDeleteDialog = true
+                                    },
+                                    onComplete = { onCompleteHabit(habit) },
+                                    isCompletedToday = completedHabitsToday.contains(habit.id),
+                                    isAvailableToday = true
+                                )
+                            }
                         }
+                        
+                        // Hábitos para otros días
+                        if (habitsForOtherDays.isNotEmpty()) {
+                            item {
+                                Text(
+                                    text = "Próximamente",
+                                    fontSize = 16.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = MaterialTheme.colorScheme.onBackground,
+                                    modifier = Modifier.padding(bottom = 12.dp, top = 16.dp)
+                                )
+                            }
+                            items(habitsForOtherDays) { habit ->
+                                HabitCard(
+                                    habit = habit,
+                                    onClick = { onHabitClick(habit) },
+                                    onDelete = {
+                                        habitToDelete = habit
+                                        showDeleteDialog = true
+                                    },
+                                    onComplete = { onCompleteHabit(habit) },
+                                    isCompletedToday = completedHabitsToday.contains(habit.id),
+                                    isAvailableToday = false
+                                )
+                            }
+                        }
+                        
                         item { Spacer(modifier = Modifier.height(16.dp)) }
                     }
                 }
@@ -201,7 +254,8 @@ fun HabitCard(
     onClick: () -> Unit,
     onDelete: () -> Unit,
     onComplete: () -> Unit,
-    isCompletedToday: Boolean
+    isCompletedToday: Boolean,
+    isAvailableToday: Boolean
 ) {
     Card(
         modifier =
@@ -209,11 +263,18 @@ fun HabitCard(
                 .padding(bottom = 12.dp)
                 .alpha(if (isCompletedToday) 0.6f else 1f),
         shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = Color(0xFFE8E8E8)),
-        onClick = onClick
+        colors = CardDefaults.cardColors(containerColor = Color(0xFFE8E8E8))
     ) {
         Row(
-            modifier = Modifier.fillMaxWidth().padding(16.dp),
+            modifier = Modifier.fillMaxWidth()
+                .padding(16.dp)
+                .then(
+                    if (isAvailableToday) {
+                        Modifier.clickable { onClick() }
+                    } else {
+                        Modifier
+                    }
+                ),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -239,14 +300,30 @@ fun HabitCard(
                     modifier = Modifier.padding(top = 8.dp).fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    Chip(label = habit.frequency.name)
-                    Text(
-                        text = "0 días",
-                        fontSize = 12.sp,
-                        color = BluePrimary,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.align(Alignment.CenterVertically)
-                    )
+                    Chip(label = when(habit.frequency) {
+                        HabitFrequency.DAILY -> "Diario"
+                        HabitFrequency.WEEKLY -> "Semanal"
+                        HabitFrequency.MONTHLY -> "Mensual"
+                    })
+                    
+                    if (isAvailableToday) {
+                        Text(
+                            text = "Disponible hoy",
+                            fontSize = 12.sp,
+                            color = GreenPrimary,
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier.align(Alignment.CenterVertically)
+                        )
+                    } else {
+                        val daysUntilAvailable = daysUntilHabitAvailable(habit)
+                        Text(
+                            text = "En $daysUntilAvailable ${if (daysUntilAvailable == 1) "día" else "días"}",
+                            fontSize = 12.sp,
+                            color = BluePrimary,
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier.align(Alignment.CenterVertically)
+                        )
+                    }
                 }
             }
 
@@ -256,12 +333,14 @@ fun HabitCard(
             ) {
                 IconButton(
                     onClick = onComplete,
+                    enabled = isAvailableToday,
                     modifier =
                         Modifier.size(48.dp)
                             .background(
                                 color =
                                     if (isCompletedToday) GreenPrimary
-                                    else GreenPrimary.copy(alpha = 0.1f),
+                                    else if (isAvailableToday) GreenPrimary.copy(alpha = 0.1f)
+                                    else Color.Gray.copy(alpha = 0.1f),
                                 shape = RoundedCornerShape(12.dp)
                             )
                 ) {
@@ -270,7 +349,8 @@ fun HabitCard(
                         contentDescription = stringResource(R.string.completed_today),
                         tint =
                             if (isCompletedToday) MaterialTheme.colorScheme.onPrimary
-                            else GreenPrimary,
+                            else if (isAvailableToday) GreenPrimary
+                            else Color.Gray,
                         modifier = Modifier.size(24.dp)
                     )
                 }
@@ -334,4 +414,105 @@ fun formatDateInSpanish(date: java.time.LocalDate): String {
     val year = date.year
 
     return "$dayOfWeek $dayOfMonth de $month de $year"
+}
+
+// Helper functions for habit scheduling
+
+/**
+ * Determines if a habit is scheduled for today
+ */
+fun isHabitScheduledForToday(habit: Habit): Boolean {
+    val today = LocalDate.now()
+    
+    // Check if habit is active
+    if (!habit.isActive) return false
+    
+    // Check creation date
+    val creationDate = habit.createdAt.toLocalDate()
+    if (today.isBefore(creationDate)) return false
+    
+    // Check finish date
+    habit.finishDate?.let { finishDateStr ->
+        try {
+            val finishDate = LocalDate.parse(finishDateStr)
+            if (today.isAfter(finishDate)) return false
+        } catch (e: Exception) {
+            // Ignore parsing errors
+        }
+    }
+    
+    // Check frequency
+    return when (habit.frequency) {
+        HabitFrequency.DAILY -> true
+        HabitFrequency.WEEKLY -> {
+            if (habit.scheduledWeekday != null) {
+                val scheduledDayOfWeek = (habit.scheduledWeekday + 1) % 7
+                val actualDayOfWeek = if (today.dayOfWeek.value == 7) 0 else today.dayOfWeek.value
+                scheduledDayOfWeek == actualDayOfWeek
+            } else {
+                val creationDayOfWeek = creationDate.dayOfWeek
+                today.dayOfWeek == creationDayOfWeek
+            }
+        }
+        HabitFrequency.MONTHLY -> {
+            if (habit.scheduledMonthday != null) {
+                today.dayOfMonth == habit.scheduledMonthday
+            } else {
+                today.dayOfMonth == creationDate.dayOfMonth
+            }
+        }
+    }
+}
+
+/**
+ * Calculates days until a habit becomes available
+ */
+fun daysUntilHabitAvailable(habit: Habit): Int {
+    val today = LocalDate.now()
+    
+    return when (habit.frequency) {
+        HabitFrequency.DAILY -> 0 // Daily habits are always available
+        HabitFrequency.WEEKLY -> {
+            if (habit.scheduledWeekday != null) {
+                val scheduledDayOfWeek = (habit.scheduledWeekday + 1) % 7
+                val actualDayOfWeek = if (today.dayOfWeek.value == 7) 0 else today.dayOfWeek.value
+                
+                var daysUntil = (scheduledDayOfWeek - actualDayOfWeek + 7) % 7
+                if (daysUntil == 0) daysUntil = 7
+                daysUntil
+            } else {
+                val creationDate = habit.createdAt.toLocalDate()
+                val creationDayOfWeek = creationDate.dayOfWeek
+                val actualDayOfWeek = today.dayOfWeek
+                
+                var daysUntil = (creationDayOfWeek.value - actualDayOfWeek.value + 7) % 7
+                if (daysUntil == 0) daysUntil = 7
+                daysUntil
+            }
+        }
+        HabitFrequency.MONTHLY -> {
+            if (habit.scheduledMonthday != null) {
+                val scheduledDay = habit.scheduledMonthday
+                val currentDay = today.dayOfMonth
+                val daysInMonth = today.lengthOfMonth()
+                
+                if (scheduledDay > currentDay) {
+                    scheduledDay - currentDay
+                } else {
+                    (daysInMonth - currentDay) + scheduledDay
+                }
+            } else {
+                val creationDate = habit.createdAt.toLocalDate()
+                val creationDay = creationDate.dayOfMonth
+                val currentDay = today.dayOfMonth
+                val daysInMonth = today.lengthOfMonth()
+                
+                if (creationDay > currentDay) {
+                    creationDay - currentDay
+                } else {
+                    (daysInMonth - currentDay) + creationDay
+                }
+            }
+        }
+    }
 }
