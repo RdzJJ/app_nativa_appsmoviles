@@ -27,16 +27,26 @@ import co.edu.upb.vitahabittracker.data.models.User
 import co.edu.upb.vitahabittracker.ui.theme.BluePrimary
 import co.edu.upb.vitahabittracker.ui.theme.GreenPrimary
 import java.time.LocalDate
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.runtime.rememberCoroutineScope
+import kotlinx.coroutines.launch
 
 @Composable
 fun ProfileScreen(
     user: User? = null,
     onLogoutClick: () -> Unit,
     habits: List<Habit> = emptyList(),
-    habitEntries: List<HabitEntry> = emptyList()
+    habitEntries: List<HabitEntry> = emptyList(),
+    onUpdateProfile: suspend (newName: String) -> Result<Unit> = { Result.success(Unit) },
+    onChangePassword: suspend (currentPassword: String, newPassword: String) -> Result<Unit> = { _, _ -> Result.success(Unit) },
+    onProfileUpdateSuccess: (String) -> Unit = {}
 ) {
         val displayUser = user ?: User(name = "Usuario", email = "usuario@email.com")
         var showEditDialog by remember { mutableStateOf(false) }
+        var errorMessage by remember { mutableStateOf("") }
+        var successMessage by remember { mutableStateOf("") }
+        val coroutineScope = rememberCoroutineScope()
 
         // Calculate metrics
         val totalHabits = habits.size
@@ -47,14 +57,36 @@ fun ProfileScreen(
         val currentStreak = remember(habitEntries) {
             calculateUserStreak(habitEntries)
         }
+        val completionPercentage = remember(habits, habitEntries) {
+            calculateCompletionPercentage(habits, habitEntries)
+        }
 
         if (showEditDialog) {
                 EditProfileDialog(
                         user = displayUser,
                         onDismiss = { showEditDialog = false },
-                        onSave = {
-                                // Profile update logic (bio removed)
-                                showEditDialog = false
+                        onSaveName = { newName, onSuccess, onError ->
+                                coroutineScope.launch {
+                                        val result = onUpdateProfile(newName)
+                                        result.onSuccess {
+                                                onSuccess("Nombre actualizado correctamente")
+                                                showEditDialog = false
+                                                onProfileUpdateSuccess(newName)
+                                        }.onFailure {
+                                                onError(it.message ?: "Error al actualizar el nombre")
+                                        }
+                                }
+                        },
+                        onChangePassword = { currentPassword, newPassword, onSuccess, onError ->
+                                coroutineScope.launch {
+                                        val result = onChangePassword(currentPassword, newPassword)
+                                        result.onSuccess {
+                                                onSuccess("Contraseña cambiada correctamente")
+                                                showEditDialog = false
+                                        }.onFailure {
+                                                onError(it.message ?: "Error al cambiar la contraseña")
+                                        }
+                                }
                         }
                 )
         }
@@ -144,12 +176,32 @@ fun ProfileScreen(
                                 ) {
                                         StatItem(label = "Hábitos", value = totalHabits.toString())
                                         StatItem(label = "Racha", value = currentStreak.toString())
-                                        StatItem(label = "Hoy", value = completedToday.toString())
+                                        StatItem(label = "Cumplimiento", value = "$completionPercentage%")
                                 }
                         }
                 }
 
                 Spacer(modifier = Modifier.height(24.dp))
+
+                // Edit Profile Button
+                Button(
+                        onClick = { showEditDialog = true },
+                        modifier = Modifier.fillMaxWidth().height(56.dp),
+                        colors =
+                                ButtonDefaults.buttonColors(
+                                        containerColor = GreenPrimary
+                                ),
+                        shape = RoundedCornerShape(12.dp)
+                ) {
+                        Icon(
+                                Icons.Filled.Person,
+                                contentDescription = null,
+                                modifier = Modifier.padding(end = 8.dp)
+                        )
+                        Text("Editar Perfil", fontWeight = FontWeight.Bold)
+                }
+
+                Spacer(modifier = Modifier.height(12.dp))
 
                 // Logout Button - In scrollable content
                 Button(
@@ -175,8 +227,19 @@ fun ProfileScreen(
 }
 
 @Composable
-fun EditProfileDialog(user: User, onDismiss: () -> Unit, onSave: (name: String) -> Unit) {
+fun EditProfileDialog(
+    user: User,
+    onDismiss: () -> Unit,
+    onSaveName: (newName: String, onSuccess: (String) -> Unit, onError: (String) -> Unit) -> Unit,
+    onChangePassword: (currentPassword: String, newPassword: String, onSuccess: (String) -> Unit, onError: (String) -> Unit) -> Unit
+) {
         var editName by remember { mutableStateOf(user.name) }
+        var activeTab by remember { mutableStateOf(0) } // 0 = Edit Name, 1 = Change Password
+        var currentPassword by remember { mutableStateOf("") }
+        var newPassword by remember { mutableStateOf("") }
+        var confirmPassword by remember { mutableStateOf("") }
+        var errorMessage by remember { mutableStateOf("") }
+        var successMessage by remember { mutableStateOf("") }
 
         Dialog(
                 onDismissRequest = onDismiss,
@@ -201,25 +264,129 @@ fun EditProfileDialog(user: User, onDismiss: () -> Unit, onSave: (name: String) 
                                         fontSize = 20.sp,
                                         fontWeight = FontWeight.Bold,
                                         color = MaterialTheme.colorScheme.onSurface,
-                                        modifier = Modifier.padding(bottom = 24.dp)
+                                        modifier = Modifier.padding(bottom = 16.dp)
                                 )
 
-                                OutlinedTextField(
-                                        value = editName,
-                                        onValueChange = { editName = it },
-                                        label = { Text(stringResource(R.string.user_name)) },
+                                // Tab buttons
+                                Row(
                                         modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp),
-                                        shape = RoundedCornerShape(12.dp),
-                                        colors =
-                                                OutlinedTextFieldDefaults.colors(
-                                                        focusedBorderColor = BluePrimary,
-                                                        unfocusedBorderColor =
-                                                                BluePrimary.copy(alpha = 0.3f)
+                                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                                ) {
+                                        Button(
+                                                onClick = { activeTab = 0; errorMessage = "" },
+                                                modifier = Modifier.weight(1f).height(40.dp),
+                                                colors = ButtonDefaults.buttonColors(
+                                                        containerColor = if (activeTab == 0) GreenPrimary else Color.Gray.copy(alpha = 0.2f)
+                                                ),
+                                                shape = RoundedCornerShape(8.dp)
+                                        ) {
+                                                Text(
+                                                        "Nombre",
+                                                        fontSize = 12.sp,
+                                                        color = if (activeTab == 0) Color.White else MaterialTheme.colorScheme.onSurface
                                                 )
-                                )
+                                        }
+                                        Button(
+                                                onClick = { activeTab = 1; errorMessage = "" },
+                                                modifier = Modifier.weight(1f).height(40.dp),
+                                                colors = ButtonDefaults.buttonColors(
+                                                        containerColor = if (activeTab == 1) GreenPrimary else Color.Gray.copy(alpha = 0.2f)
+                                                ),
+                                                shape = RoundedCornerShape(8.dp)
+                                        ) {
+                                                Text(
+                                                        "Contraseña",
+                                                        fontSize = 12.sp,
+                                                        color = if (activeTab == 1) Color.White else MaterialTheme.colorScheme.onSurface
+                                                )
+                                        }
+                                }
+
+                                if (errorMessage.isNotEmpty()) {
+                                        Text(
+                                                text = errorMessage,
+                                                fontSize = 12.sp,
+                                                color = MaterialTheme.colorScheme.error,
+                                                modifier = Modifier.fillMaxWidth().padding(bottom = 12.dp)
+                                        )
+                                }
+                                
+                                if (successMessage.isNotEmpty()) {
+                                        Text(
+                                                text = successMessage,
+                                                fontSize = 12.sp,
+                                                color = GreenPrimary,
+                                                modifier = Modifier.fillMaxWidth().padding(bottom = 12.dp)
+                                        )
+                                }
+
+                                // Tab 0: Edit Name
+                                if (activeTab == 0) {
+                                        OutlinedTextField(
+                                                value = editName,
+                                                onValueChange = { editName = it },
+                                                label = { Text("Nombre") },
+                                                modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp),
+                                                shape = RoundedCornerShape(12.dp),
+                                                colors =
+                                                        OutlinedTextFieldDefaults.colors(
+                                                                focusedBorderColor = BluePrimary,
+                                                                unfocusedBorderColor =
+                                                                        BluePrimary.copy(alpha = 0.3f)
+                                                        )
+                                        )
+                                }
+
+                                // Tab 1: Change Password
+                                if (activeTab == 1) {
+                                        OutlinedTextField(
+                                                value = currentPassword,
+                                                onValueChange = { currentPassword = it },
+                                                label = { Text("Contraseña Actual") },
+                                                modifier = Modifier.fillMaxWidth().padding(bottom = 12.dp),
+                                                shape = RoundedCornerShape(12.dp),
+                                                visualTransformation = PasswordVisualTransformation(),
+                                                colors =
+                                                        OutlinedTextFieldDefaults.colors(
+                                                                focusedBorderColor = BluePrimary,
+                                                                unfocusedBorderColor =
+                                                                        BluePrimary.copy(alpha = 0.3f)
+                                                        )
+                                        )
+
+                                        OutlinedTextField(
+                                                value = newPassword,
+                                                onValueChange = { newPassword = it },
+                                                label = { Text("Nueva Contraseña") },
+                                                modifier = Modifier.fillMaxWidth().padding(bottom = 12.dp),
+                                                shape = RoundedCornerShape(12.dp),
+                                                visualTransformation = PasswordVisualTransformation(),
+                                                colors =
+                                                        OutlinedTextFieldDefaults.colors(
+                                                                focusedBorderColor = BluePrimary,
+                                                                unfocusedBorderColor =
+                                                                        BluePrimary.copy(alpha = 0.3f)
+                                                        )
+                                        )
+
+                                        OutlinedTextField(
+                                                value = confirmPassword,
+                                                onValueChange = { confirmPassword = it },
+                                                label = { Text("Confirmar Contraseña") },
+                                                modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp),
+                                                shape = RoundedCornerShape(12.dp),
+                                                visualTransformation = PasswordVisualTransformation(),
+                                                colors =
+                                                        OutlinedTextFieldDefaults.colors(
+                                                                focusedBorderColor = BluePrimary,
+                                                                unfocusedBorderColor =
+                                                                        BluePrimary.copy(alpha = 0.3f)
+                                                        )
+                                        )
+                                }
 
                                 Row(
-                                        modifier = Modifier.fillMaxWidth().padding(top = 16.dp),
+                                        modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
                                         horizontalArrangement = Arrangement.spacedBy(12.dp)
                                 ) {
                                         OutlinedButton(
@@ -229,7 +396,35 @@ fun EditProfileDialog(user: User, onDismiss: () -> Unit, onSave: (name: String) 
                                         ) { Text(stringResource(R.string.cancel)) }
 
                                         Button(
-                                                onClick = { onSave(editName) },
+                                                onClick = {
+                                                        errorMessage = ""
+                                                        successMessage = ""
+                                                        if (activeTab == 0) {
+                                                                if (editName.isEmpty()) {
+                                                                        errorMessage = "El nombre no puede estar vacío"
+                                                                } else {
+                                                                        onSaveName(
+                                                                                editName,
+                                                                                { message -> successMessage = message },
+                                                                                { error -> errorMessage = error }
+                                                                        )
+                                                                }
+                                                        } else {
+                                                                when {
+                                                                        currentPassword.isEmpty() -> errorMessage = "Ingresa tu contraseña actual"
+                                                                        newPassword.isEmpty() -> errorMessage = "Ingresa la nueva contraseña"
+                                                                        confirmPassword.isEmpty() -> errorMessage = "Confirma la nueva contraseña"
+                                                                        newPassword != confirmPassword -> errorMessage = "Las contraseñas no coinciden"
+                                                                        newPassword.length < 6 -> errorMessage = "La contraseña debe tener al menos 6 caracteres"
+                                                                        else -> onChangePassword(
+                                                                                currentPassword,
+                                                                                newPassword,
+                                                                                { message -> successMessage = message },
+                                                                                { error -> errorMessage = error }
+                                                                        )
+                                                                }
+                                                        }
+                                                },
                                                 modifier = Modifier.weight(1f).height(48.dp),
                                                 colors =
                                                         ButtonDefaults.buttonColors(
@@ -289,4 +484,60 @@ fun calculateUserStreak(entries: List<HabitEntry>): Int {
     }
 
     return streak
+}
+
+// Helper function to calculate completion percentage for last 30 days
+fun calculateCompletionPercentage(habits: List<Habit>, entries: List<HabitEntry>): Int {
+    if (habits.isEmpty()) return 0
+
+    val last30Days = LocalDate.now().minusDays(29)
+    val recentEntries = entries.filter { it.completedDate >= last30Days }
+
+    // Calculate expected completions based on habit frequency
+    var expectedCompletions = 0
+    for (habit in habits) {
+        val habitCreationDate = habit.createdAt.toLocalDate()
+        
+        // Count eligible days for this habit (from creation date to now, within last 30 days)
+        var daysEligible = 0
+        var currentDate = maxOf(habitCreationDate, last30Days)
+        val today = LocalDate.now()
+        
+        while (currentDate <= today) {
+            // Check if this day should have the habit
+            when (habit.frequency) {
+                co.edu.upb.vitahabittracker.data.models.HabitFrequency.DAILY -> {
+                    daysEligible++
+                }
+                co.edu.upb.vitahabittracker.data.models.HabitFrequency.WEEKLY -> {
+                    // Check if it's the scheduled weekday
+                    if (habit.scheduledWeekday != null) {
+                        val scheduledDayOfWeek = (habit.scheduledWeekday + 1) % 7
+                        val actualDayOfWeek = if (currentDate.dayOfWeek.value == 7) 0 else currentDate.dayOfWeek.value
+                        if (scheduledDayOfWeek == actualDayOfWeek) daysEligible++
+                    } else {
+                        val creationDayOfWeek = habitCreationDate.dayOfWeek
+                        if (currentDate.dayOfWeek == creationDayOfWeek) daysEligible++
+                    }
+                }
+                co.edu.upb.vitahabittracker.data.models.HabitFrequency.MONTHLY -> {
+                    // Check if it's the scheduled monthday
+                    if (habit.scheduledMonthday != null) {
+                        if (currentDate.dayOfMonth == habit.scheduledMonthday) daysEligible++
+                    } else {
+                        if (currentDate.dayOfMonth == habitCreationDate.dayOfMonth) daysEligible++
+                    }
+                }
+            }
+            currentDate = currentDate.plusDays(1)
+        }
+        
+        expectedCompletions += daysEligible
+    }
+
+    val actualCompletions = recentEntries.size
+
+    return if (expectedCompletions > 0) {
+        ((actualCompletions.toFloat() / expectedCompletions) * 100).toInt().coerceIn(0, 100)
+    } else 0
 }

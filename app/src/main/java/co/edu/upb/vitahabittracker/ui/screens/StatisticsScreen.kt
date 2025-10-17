@@ -742,22 +742,26 @@ fun calculateStatistics(habits: List<Habit>, entries: List<HabitEntry>): Statist
 fun calculateCurrentStreak(entries: List<HabitEntry>): Int {
     if (entries.isEmpty()) return 0
 
-    val sortedDates = entries.map { it.completedDate }.distinct().sortedDescending()
-    if (sortedDates.isEmpty()) return 0
+    // Get all unique dates where ANY habit was completed, sorted descending
+    val completedDates = entries.map { it.completedDate }.distinct().sortedDescending()
+    if (completedDates.isEmpty()) return 0
 
     val today = LocalDate.now()
-    if (sortedDates.first() != today && sortedDates.first() != today.minusDays(1)) {
+    // Check if the most recent completion was today or yesterday
+    if (completedDates.first() != today && completedDates.first() != today.minusDays(1)) {
         return 0
     }
 
     var streak = 0
-    var currentDate = if (sortedDates.first() == today) today else today.minusDays(1)
+    var currentDate = if (completedDates.first() == today) today else today.minusDays(1)
 
-    for (date in sortedDates) {
+    // Count consecutive days backward from the most recent completion
+    for (date in completedDates) {
         if (date == currentDate) {
             streak++
             currentDate = currentDate.minusDays(1)
-        } else {
+        } else if (date < currentDate) {
+            // Gap found, streak is broken
             break
         }
     }
@@ -816,7 +820,7 @@ fun calculateCompletionRate(habits: List<Habit>, entries: List<HabitEntry>): Int
     val actualCompletions = recentEntries.size
 
     return if (expectedCompletions > 0) {
-        ((actualCompletions.toFloat() / expectedCompletions) * 100).toInt()
+        ((actualCompletions.toFloat() / expectedCompletions) * 100).toInt().coerceIn(0, 100)
     } else 0
 }
 

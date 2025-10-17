@@ -250,6 +250,10 @@ fun VitaHabitosApp() {
                                 onAddHabit = { showAddHabitDialog = true },
                                 editingHabit = editingHabit,
                                 showEditHabitDialog = showEditHabitDialog,
+                                authRepository = authRepository,
+                                onUserUpdated = { updatedUser ->
+                                        currentUser = updatedUser
+                                },
                                 onDismissEditHabit = {
                                         showEditHabitDialog = false
                                         editingHabit = null
@@ -443,7 +447,10 @@ fun MainAppScreen(
                         Int?) -> Unit =
                 { _, _, _, _, _, _, _ ->
                 },
-        completedHabitsToday: Set<Int> = emptySet()
+        completedHabitsToday: Set<Int> = emptySet(),
+        authRepository: AuthRepository,
+        onUserUpdated: (User) -> Unit = {},
+        onProfileUpdateSuccess: (String) -> Unit = {}
 ) {
         Box(modifier = Modifier.fillMaxSize()) {
                 Scaffold(
@@ -685,7 +692,19 @@ fun MainAppScreen(
                                                         habitEntries = habitEntries
                                                 )
                                         "profile" ->
-                                                ProfileScreen(user = user, onLogoutClick = onLogout, habits = habits, habitEntries = habitEntries)
+                                                ProfileScreen(
+                                                        user = user,
+                                                        onLogoutClick = onLogout,
+                                                        habits = habits,
+                                                        habitEntries = habitEntries,
+                                                        onUpdateProfile = { newName ->
+                                                                authRepository.updateUserProfile(newName)
+                                                        },
+                                                        onChangePassword = { currentPassword, newPassword ->
+                                                                authRepository.changePassword(currentPassword, newPassword)
+                                                        },
+                                                        onProfileUpdateSuccess = onProfileUpdateSuccess
+                                                )
                                 }
                                 if (showAddHabitDialog) {
                                         AddHabitDialog(
