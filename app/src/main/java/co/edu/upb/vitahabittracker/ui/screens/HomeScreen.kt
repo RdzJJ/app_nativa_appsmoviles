@@ -324,13 +324,7 @@ fun HabitCard(
         Row(
             modifier = Modifier.fillMaxWidth()
                 .padding(16.dp)
-                .then(
-                    if (isAvailableToday) {
-                        Modifier.clickable { onClick() }
-                    } else {
-                        Modifier
-                    }
-                ),
+                .clickable { onClick() },
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
