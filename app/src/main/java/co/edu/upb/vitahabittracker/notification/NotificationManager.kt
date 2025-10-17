@@ -67,7 +67,7 @@ class NotificationManager(private val context: Context) {
         )
 
         val notification = NotificationCompat.Builder(context, REMINDER_CHANNEL_ID)
-            .setSmallIcon(android.R.drawable.ic_dialog_info)
+            .setSmallIcon(R.mipmap.ic_vita)
             .setContentTitle("Recordatorio de Hábito")
             .setContentText("¡Es hora de registrar: $habitName!")
             .setPriority(NotificationCompat.PRIORITY_HIGH)
@@ -89,7 +89,7 @@ class NotificationManager(private val context: Context) {
 
     fun showHabitCompletedNotification(habitName: String, notificationId: Int = HABIT_NOTIFICATION_ID) {
         val notification = NotificationCompat.Builder(context, HABIT_CHANNEL_ID)
-            .setSmallIcon(android.R.drawable.ic_dialog_info)
+            .setSmallIcon(R.mipmap.ic_vita)
             .setContentTitle("¡Hábito Completado!")
             .setContentText("Excelente: $habitName ha sido registrado.")
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
@@ -101,7 +101,7 @@ class NotificationManager(private val context: Context) {
 
     fun showAlreadyCompletedNotification(habitName: String, notificationId: Int = HABIT_NOTIFICATION_ID) {
         val notification = NotificationCompat.Builder(context, HABIT_CHANNEL_ID)
-            .setSmallIcon(android.R.drawable.ic_dialog_info)
+            .setSmallIcon(R.mipmap.ic_vita)
             .setContentTitle("Ya completado")
             .setContentText("$habitName ya fue registrado hoy.")
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
