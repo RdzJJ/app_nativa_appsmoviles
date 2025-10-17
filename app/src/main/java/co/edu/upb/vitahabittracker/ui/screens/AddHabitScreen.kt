@@ -37,7 +37,8 @@ fun AddHabitDialog(
                         finishDate: String?,
                         weekday: Int?,
                         monthday: Int?) -> Unit,
-        initialHabit: co.edu.upb.vitahabittracker.data.models.Habit? = null
+        initialHabit: co.edu.upb.vitahabittracker.data.models.Habit? = null,
+        isEditing: Boolean = false
 ) {
         var habitName by remember { mutableStateOf(initialHabit?.name ?: "") }
         var habitDescription by remember { mutableStateOf(initialHabit?.description ?: "") }
@@ -88,7 +89,10 @@ fun AddHabitDialog(
                                         verticalAlignment = Alignment.CenterVertically
                                 ) {
                                         Text(
-                                                text = stringResource(R.string.add_habit),
+                                                text =
+                                                        if (isEditing)
+                                                                stringResource(R.string.edit_habit)
+                                                        else stringResource(R.string.add_habit),
                                                 fontSize = 20.sp,
                                                 fontWeight = FontWeight.Bold,
                                                 color = MaterialTheme.colorScheme.onSurface
@@ -418,7 +422,12 @@ fun AddHabitDialog(
                                                                         )
                                                         ),
                                                 shape = RoundedCornerShape(12.dp)
-                                        ) { Text(stringResource(R.string.save)) }
+                                        ) {
+                                                Text(
+                                                        if (isEditing) stringResource(R.string.save)
+                                                        else stringResource(R.string.save)
+                                                )
+                                        }
                                 }
                         }
                 }

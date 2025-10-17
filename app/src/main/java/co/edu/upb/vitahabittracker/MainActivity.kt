@@ -239,7 +239,7 @@ fun VitaHabitosApp() {
                                 },
                                 onEditHabit = { habit ->
                                         editingHabit = habit
-                                        showEditHabitDialog = true
+                                        showAddHabitDialog = true
                                 },
                                 onCompleteHabit = { habit ->
                                         coroutineScope.launch {
@@ -298,9 +298,7 @@ fun VitaHabitosApp() {
                                                 isProcessingHabit = true
                                                 coroutineScope.launch {
                                                         try {
-                                                                if (showEditHabitDialog &&
-                                                                                editingHabit != null
-                                                                ) {
+                                                                if (editingHabit != null) {
                                                                         // Update existing habit in
                                                                         // Firestore
                                                                         val updatedHabit =
@@ -664,7 +662,9 @@ fun MainAppScreen(
                                 if (showAddHabitDialog) {
                                         AddHabitDialog(
                                                 onDismiss = onDismissAddHabit,
-                                                onSave = onSaveHabit
+                                                onSave = onSaveHabit,
+                                                initialHabit = editingHabit,
+                                                isEditing = editingHabit != null
                                         )
                                 }
                         }
