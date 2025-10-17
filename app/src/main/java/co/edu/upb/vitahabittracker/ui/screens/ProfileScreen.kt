@@ -8,8 +8,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ExitToApp
-import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -28,7 +26,7 @@ import co.edu.upb.vitahabittracker.ui.theme.BluePrimary
 import co.edu.upb.vitahabittracker.ui.theme.GreenPrimary
 
 @Composable
-fun ProfileScreen(user: User? = null, onEditClick: () -> Unit, onLogoutClick: () -> Unit) {
+fun ProfileScreen(user: User? = null, onLogoutClick: () -> Unit) {
         val displayUser = user ?: User(name = "Usuario", email = "usuario@email.com")
         var showEditDialog by remember { mutableStateOf(false) }
 
@@ -36,8 +34,8 @@ fun ProfileScreen(user: User? = null, onEditClick: () -> Unit, onLogoutClick: ()
                 EditProfileDialog(
                         user = displayUser,
                         onDismiss = { showEditDialog = false },
-                        onSave = { name, bio ->
-                                // Update profile logic
+                        onSave = {
+                                // Profile update logic (bio removed)
                                 showEditDialog = false
                         }
                 )
@@ -104,94 +102,6 @@ fun ProfileScreen(user: User? = null, onEditClick: () -> Unit, onLogoutClick: ()
 
                 Spacer(modifier = Modifier.height(24.dp))
 
-                // User Details Card
-                Card(
-                        modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp),
-                        shape = RoundedCornerShape(16.dp),
-                        colors =
-                                CardDefaults.cardColors(
-                                        containerColor = MaterialTheme.colorScheme.surface
-                                )
-                ) {
-                        Column(modifier = Modifier.padding(16.dp)) {
-                                // Email
-                                Row(
-                                        modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp),
-                                        verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                        Icon(
-                                                Icons.Filled.Email,
-                                                contentDescription = null,
-                                                tint = BluePrimary,
-                                                modifier = Modifier.size(24.dp).padding(end = 12.dp)
-                                        )
-                                        Column {
-                                                Text(
-                                                        stringResource(R.string.user_email),
-                                                        fontSize = 12.sp,
-                                                        color =
-                                                                MaterialTheme.colorScheme.onSurface
-                                                                        .copy(alpha = 0.6f)
-                                                )
-                                                Text(
-                                                        displayUser.email,
-                                                        fontSize = 14.sp,
-                                                        fontWeight = FontWeight.SemiBold,
-                                                        color = MaterialTheme.colorScheme.onSurface
-                                                )
-                                        }
-                                }
-
-                                HorizontalDivider(
-                                        modifier = Modifier.padding(vertical = 8.dp),
-                                        thickness = 0.5.dp
-                                )
-
-                                // Join Date
-                                Row(
-                                        modifier = Modifier.fillMaxWidth().padding(top = 16.dp),
-                                        verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                        Icon(
-                                                Icons.Filled.Person,
-                                                contentDescription = null,
-                                                tint = GreenPrimary,
-                                                modifier = Modifier.size(24.dp).padding(end = 12.dp)
-                                        )
-                                        Column {
-                                                Text(
-                                                        "Miembro desde",
-                                                        fontSize = 12.sp,
-                                                        color =
-                                                                MaterialTheme.colorScheme.onSurface
-                                                                        .copy(alpha = 0.6f)
-                                                )
-                                                Text(
-                                                        displayUser.joinDate,
-                                                        fontSize = 14.sp,
-                                                        fontWeight = FontWeight.SemiBold,
-                                                        color = MaterialTheme.colorScheme.onSurface
-                                                )
-                                        }
-                                }
-                        }
-                }
-
-                // Edit Profile Button
-                Button(
-                        onClick = { showEditDialog = true },
-                        modifier = Modifier.fillMaxWidth().height(48.dp).padding(bottom = 12.dp),
-                        colors = ButtonDefaults.buttonColors(containerColor = BluePrimary),
-                        shape = RoundedCornerShape(12.dp)
-                ) {
-                        Icon(
-                                Icons.Filled.Edit,
-                                contentDescription = null,
-                                modifier = Modifier.padding(end = 8.dp)
-                        )
-                        Text(stringResource(R.string.edit_profile))
-                }
-
                 // Statistics Card
                 Card(
                         modifier = Modifier.fillMaxWidth().padding(bottom = 24.dp),
@@ -247,13 +157,8 @@ fun ProfileScreen(user: User? = null, onEditClick: () -> Unit, onLogoutClick: ()
 }
 
 @Composable
-fun EditProfileDialog(
-        user: User,
-        onDismiss: () -> Unit,
-        onSave: (name: String, bio: String) -> Unit
-) {
+fun EditProfileDialog(user: User, onDismiss: () -> Unit, onSave: (name: String) -> Unit) {
         var editName by remember { mutableStateOf(user.name) }
-        var editBio by remember { mutableStateOf(user.bio) }
 
         Dialog(
                 onDismissRequest = onDismiss,
@@ -295,24 +200,6 @@ fun EditProfileDialog(
                                                 )
                                 )
 
-                                OutlinedTextField(
-                                        value = editBio,
-                                        onValueChange = { editBio = it },
-                                        label = { Text("Biografía") },
-                                        modifier =
-                                                Modifier.fillMaxWidth()
-                                                        .padding(bottom = 24.dp)
-                                                        .heightIn(min = 80.dp),
-                                        shape = RoundedCornerShape(12.dp),
-                                        colors =
-                                                OutlinedTextFieldDefaults.colors(
-                                                        focusedBorderColor = BluePrimary,
-                                                        unfocusedBorderColor =
-                                                                BluePrimary.copy(alpha = 0.3f)
-                                                ),
-                                        maxLines = 3
-                                )
-
                                 Row(
                                         modifier = Modifier.fillMaxWidth().padding(top = 16.dp),
                                         horizontalArrangement = Arrangement.spacedBy(12.dp)
@@ -324,7 +211,7 @@ fun EditProfileDialog(
                                         ) { Text(stringResource(R.string.cancel)) }
 
                                         Button(
-                                                onClick = { onSave(editName, editBio) },
+                                                onClick = { onSave(editName) },
                                                 modifier = Modifier.weight(1f).height(48.dp),
                                                 colors =
                                                         ButtonDefaults.buttonColors(
