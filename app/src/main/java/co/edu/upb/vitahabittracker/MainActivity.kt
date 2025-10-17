@@ -97,7 +97,7 @@ fun VitaHabitosApp() {
         var showEditHabitDialog by remember { mutableStateOf(false) }
 
         // Initialize repositories and load data when user logs in
-        LaunchedEffect(currentUser) {
+        LaunchedEffect(currentUser?.id) {
                 currentUser?.let { user ->
                         habitRepository = FirestoreHabitRepository(user.id)
                         habitEntryRepository = FirestoreHabitEntryRepository(user.id)
@@ -617,11 +617,7 @@ fun MainAppScreen(
                                                         habitEntries = habitEntries
                                                 )
                                         "profile" ->
-                                                ProfileScreen(
-                                                        user = user,
-                                                        onEditClick = onEditProfile,
-                                                        onLogoutClick = onLogout
-                                                )
+                                                ProfileScreen(user = user, onLogoutClick = onLogout)
                                 }
                                 if (showAddHabitDialog) {
                                         AddHabitDialog(
