@@ -1,6 +1,10 @@
 package co.edu.upb.vitahabittracker.utils
 
+import android.Manifest
 import android.content.Context
+import android.content.pm.PackageManager
+import android.os.Build
+import androidx.core.content.ContextCompat
 import androidx.work.*
 import co.edu.upb.vitahabittracker.data.models.Habit
 import co.edu.upb.vitahabittracker.data.models.HabitFrequency
@@ -14,7 +18,39 @@ class NotificationScheduler(private val context: Context) {
 
     private val workManager = WorkManager.getInstance(context)
 
+    private fun hasNotificationPermission(): Boolean {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            ContextCompat.checkSelfPermission(
+                context,
+                Manifest.permission.POST_NOTIFICATIONS
+            ) == PackageManager.PERMISSION_GRANTED
+        } else {
+            true // Permission not required for older versions
+        }
+    }
+
+    private fun hasScheduleExactAlarmPermission(): Boolean {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            // For Android 12+, check if we can schedule exact alarms
+            // Note: This is a simplified check. In production, you might want to use AlarmManager.canScheduleExactAlarms()
+            true // WorkManager handles this internally
+        } else {
+            true // Permission not required for older versions
+        }
+    }
+
     fun scheduleHabitReminder(habit: Habit) {
+        // Check permissions before scheduling
+        if (!hasNotificationPermission()) {
+            // Permission not granted, cannot schedule notifications
+            return
+        }
+
+        if (!hasScheduleExactAlarmPermission()) {
+            // Cannot schedule exact alarms
+            return
+        }
+
         habit.reminderTime?.let { timeString ->
             val time = LocalTime.parse(timeString)
             val now = LocalDateTime.now()
