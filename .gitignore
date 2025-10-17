@@ -33,3 +33,4 @@ Thumbs.db
 # Gradle cache
 .gradle/
 google-services.json
+local.properties
