@@ -692,14 +692,28 @@ fun shouldHabitBeActiveOnDate(habit: Habit, date: LocalDate): Boolean {
     return when (habit.frequency) {
         HabitFrequency.DAILY -> true
         HabitFrequency.WEEKLY -> {
-            // Para hábitos semanales, solo mostrar en el día de la semana en que se creó
-            val creationDayOfWeek = creationDate.dayOfWeek
-            date.dayOfWeek == creationDayOfWeek
+            // Para hábitos semanales, mostrar en el día de la semana programado
+            // scheduledWeekday: 0=Monday, 1=Tuesday, ..., 6=Sunday
+            // date.dayOfWeek: MONDAY=1, TUESDAY=2, ..., SUNDAY=7
+            if (habit.scheduledWeekday != null) {
+                val scheduledDayOfWeek = (habit.scheduledWeekday + 1) % 7
+                val actualDayOfWeek = if (date.dayOfWeek.value == 7) 0 else date.dayOfWeek.value
+                scheduledDayOfWeek == actualDayOfWeek
+            } else {
+                // Fallback: usar el día de la semana de creación si no hay scheduled weekday
+                val creationDayOfWeek = creationDate.dayOfWeek
+                date.dayOfWeek == creationDayOfWeek
+            }
         }
         HabitFrequency.MONTHLY -> {
-            // Para hábitos mensuales, solo mostrar en el día del mes en que se creó
-            val creationDayOfMonth = creationDate.dayOfMonth
-            date.dayOfMonth == creationDayOfMonth
+            // Para hábitos mensuales, mostrar en el día del mes programado
+            if (habit.scheduledMonthday != null) {
+                date.dayOfMonth == habit.scheduledMonthday
+            } else {
+                // Fallback: usar el día del mes de creación si no hay scheduled monthday
+                val creationDayOfMonth = creationDate.dayOfMonth
+                date.dayOfMonth == creationDayOfMonth
+            }
         }
     }
 }
@@ -757,7 +771,48 @@ fun calculateCompletionRate(habits: List<Habit>, entries: List<HabitEntry>): Int
     val last30Days = LocalDate.now().minusDays(29)
     val recentEntries = entries.filter { it.completedDate >= last30Days }
 
-    val expectedCompletions = habits.size * 30
+    // Calculate expected completions based on habit frequency
+    var expectedCompletions = 0
+    for (habit in habits) {
+        val habitCreationDate = habit.createdAt.toLocalDate()
+        
+        // Count eligible days for this habit (from creation date to now, within last 30 days)
+        var daysEligible = 0
+        var currentDate = maxOf(habitCreationDate, last30Days)
+        val today = LocalDate.now()
+        
+        while (currentDate <= today) {
+            // Check if this day should have the habit
+            when (habit.frequency) {
+                HabitFrequency.DAILY -> {
+                    daysEligible++
+                }
+                HabitFrequency.WEEKLY -> {
+                    // Check if it's the scheduled weekday
+                    if (habit.scheduledWeekday != null) {
+                        val scheduledDayOfWeek = (habit.scheduledWeekday + 1) % 7
+                        val actualDayOfWeek = if (currentDate.dayOfWeek.value == 7) 0 else currentDate.dayOfWeek.value
+                        if (scheduledDayOfWeek == actualDayOfWeek) daysEligible++
+                    } else {
+                        val creationDayOfWeek = habitCreationDate.dayOfWeek
+                        if (currentDate.dayOfWeek == creationDayOfWeek) daysEligible++
+                    }
+                }
+                HabitFrequency.MONTHLY -> {
+                    // Check if it's the scheduled monthday
+                    if (habit.scheduledMonthday != null) {
+                        if (currentDate.dayOfMonth == habit.scheduledMonthday) daysEligible++
+                    } else {
+                        if (currentDate.dayOfMonth == habitCreationDate.dayOfMonth) daysEligible++
+                    }
+                }
+            }
+            currentDate = currentDate.plusDays(1)
+        }
+        
+        expectedCompletions += daysEligible
+    }
+
     val actualCompletions = recentEntries.size
 
     return if (expectedCompletions > 0) {

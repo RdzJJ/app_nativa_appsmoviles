@@ -21,14 +21,32 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import co.edu.upb.vitahabittracker.R
+import co.edu.upb.vitahabittracker.data.models.Habit
+import co.edu.upb.vitahabittracker.data.models.HabitEntry
 import co.edu.upb.vitahabittracker.data.models.User
 import co.edu.upb.vitahabittracker.ui.theme.BluePrimary
 import co.edu.upb.vitahabittracker.ui.theme.GreenPrimary
+import java.time.LocalDate
 
 @Composable
-fun ProfileScreen(user: User? = null, onLogoutClick: () -> Unit) {
+fun ProfileScreen(
+    user: User? = null,
+    onLogoutClick: () -> Unit,
+    habits: List<Habit> = emptyList(),
+    habitEntries: List<HabitEntry> = emptyList()
+) {
         val displayUser = user ?: User(name = "Usuario", email = "usuario@email.com")
         var showEditDialog by remember { mutableStateOf(false) }
+
+        // Calculate metrics
+        val totalHabits = habits.size
+        val completedToday = remember(habitEntries) {
+            val today = LocalDate.now()
+            habitEntries.filter { it.completedDate == today }.map { it.habitId }.toSet().size
+        }
+        val currentStreak = remember(habitEntries) {
+            calculateUserStreak(habitEntries)
+        }
 
         if (showEditDialog) {
                 EditProfileDialog(
@@ -124,9 +142,9 @@ fun ProfileScreen(user: User? = null, onLogoutClick: () -> Unit) {
                                         modifier = Modifier.fillMaxWidth(),
                                         horizontalArrangement = Arrangement.SpaceEvenly
                                 ) {
-                                        StatItem(label = "Hábitos", value = "0")
-                                        StatItem(label = "Racha", value = "0")
-                                        StatItem(label = "Completados", value = "0")
+                                        StatItem(label = "Hábitos", value = totalHabits.toString())
+                                        StatItem(label = "Racha", value = currentStreak.toString())
+                                        StatItem(label = "Hoy", value = completedToday.toString())
                                 }
                         }
                 }
@@ -244,4 +262,31 @@ fun StatItem(label: String, value: String) {
                         modifier = Modifier.padding(top = 4.dp)
                 )
         }
+}
+
+// Helper function to calculate user's current streak across all habits
+fun calculateUserStreak(entries: List<HabitEntry>): Int {
+    if (entries.isEmpty()) return 0
+
+    val sortedDates = entries.map { it.completedDate }.distinct().sortedDescending()
+    if (sortedDates.isEmpty()) return 0
+
+    val today = LocalDate.now()
+    if (sortedDates.first() != today && sortedDates.first() != today.minusDays(1)) {
+        return 0
+    }
+
+    var streak = 0
+    var currentDate = if (sortedDates.first() == today) today else today.minusDays(1)
+
+    for (date in sortedDates) {
+        if (date == currentDate) {
+            streak++
+            currentDate = currentDate.minusDays(1)
+        } else {
+            break
+        }
+    }
+
+    return streak
 }

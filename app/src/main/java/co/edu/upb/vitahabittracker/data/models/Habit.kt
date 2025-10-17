@@ -15,7 +15,9 @@ data class Habit(
         val createdAt: LocalDateTime = LocalDateTime.now(),
         val isActive: Boolean = true,
         val reminderTime: String? = null, // HH:mm format
-        val finishDate: String? = null // yyyy-MM-dd format
+        val finishDate: String? = null, // yyyy-MM-dd format
+        val scheduledWeekday: Int? = null, // 0=Monday, 1=Tuesday, ..., 6=Sunday (for WEEKLY)
+        val scheduledMonthday: Int? = null // 1-31 (for MONTHLY)
 )
 
 enum class HabitFrequency {

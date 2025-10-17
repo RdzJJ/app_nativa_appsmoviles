@@ -17,6 +17,7 @@
     <!-- Home Screen -->
     <string name="home_title">Mis Hábitos</string>
     <string name="add_habit">Agregar Hábito</string>
+    <string name="edit_habit">Editar Hábito</string>
     <string name="no_habits">No hay hábitos aún</string>
     <string name="no_habits_description">Comienza agregando tu primer hábito</string>
     <string name="habit_name">Nombre del hábito</string>
