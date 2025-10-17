@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -20,9 +21,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import co.edu.upb.vitahabittracker.data.models.Habit
 import co.edu.upb.vitahabittracker.data.models.HabitEntry
+import co.edu.upb.vitahabittracker.data.models.HabitFrequency
 import co.edu.upb.vitahabittracker.ui.theme.BluePrimary
 import co.edu.upb.vitahabittracker.ui.theme.GreenPrimary
 import co.edu.upb.vitahabittracker.ui.theme.TealPrimary
+import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.YearMonth
 import java.time.format.TextStyle
@@ -47,6 +50,11 @@ fun StatisticsScreen(
             }
             .map { it.completedDate.dayOfMonth }
             .toSet()
+    }
+
+    // Calcular hábitos por día considerando frecuencia y fecha de finalización
+    val habitsPerDay = remember(habits, currentMonth) {
+        calculateHabitsPerDay(habits, currentMonth)
     }
 
     Column(
@@ -135,8 +143,8 @@ fun StatisticsScreen(
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                // Calendario
-                CalendarGrid(currentMonth, completedDaysInMonth)
+                // Calendario con puntos
+                CalendarGrid(currentMonth, completedDaysInMonth, habitsPerDay)
             }
         }
 
@@ -258,7 +266,8 @@ fun StatsCard(
 @Composable
 fun CalendarGrid(
     yearMonth: YearMonth,
-    completedDays: Set<Int>
+    completedDays: Set<Int>,
+    habitsPerDay: Map<Int, Int>
 ) {
     val firstDay = yearMonth.atDay(1)
     val lastDay = yearMonth.atEndOfMonth()
@@ -302,6 +311,7 @@ fun CalendarGrid(
                     if (dayNumber in 1..daysInMonth) {
                         val isCompleted = dayNumber in completedDays
                         val isToday = yearMonth == YearMonth.now() && dayNumber == LocalDate.now().dayOfMonth
+                        val habitCount = habitsPerDay[dayNumber] ?: 0
 
                         Box(
                             modifier = Modifier
@@ -318,12 +328,41 @@ fun CalendarGrid(
                                 ),
                             contentAlignment = Alignment.Center
                         ) {
-                            Text(
-                                text = dayNumber.toString(),
-                                fontSize = 12.sp,
-                                fontWeight = if (isToday) FontWeight.Bold else FontWeight.SemiBold,
-                                color = if (isCompleted) Color.White else Color(0xFF333333)
-                            )
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.Center
+                            ) {
+                                Text(
+                                    text = dayNumber.toString(),
+                                    fontSize = 12.sp,
+                                    fontWeight = if (isToday) FontWeight.Bold else FontWeight.SemiBold,
+                                    color = if (isCompleted) Color.White else Color(0xFF333333)
+                                )
+
+                                // Puntos indicadores de hábitos
+                                if (habitCount > 0) {
+                                    Spacer(modifier = Modifier.height(2.dp))
+                                    Row(
+                                        horizontalArrangement = Arrangement.Center,
+                                        modifier = Modifier.height(4.dp)
+                                    ) {
+                                        repeat(minOf(habitCount, 5)) { index ->
+                                            Box(
+                                                modifier = Modifier
+                                                    .size(3.dp)
+                                                    .background(
+                                                        color = if (isCompleted) Color.White.copy(alpha = 0.7f)
+                                                        else BluePrimary.copy(alpha = 0.8f),
+                                                        shape = CircleShape
+                                                    )
+                                            )
+                                            if (index < minOf(habitCount, 5) - 1) {
+                                                Spacer(modifier = Modifier.width(2.dp))
+                                            }
+                                        }
+                                    }
+                                }
+                            }
                         }
                     } else {
                         Box(modifier = Modifier.weight(1f))
@@ -331,6 +370,71 @@ fun CalendarGrid(
                     currentDay++
                 }
             }
+        }
+    }
+}
+
+// ---------- Funciones de cálculo ----------
+
+/**
+ * Calcula cuántos hábitos debe cumplir el usuario cada día del mes
+ * considerando la frecuencia y la fecha de finalización
+ */
+fun calculateHabitsPerDay(habits: List<Habit>, yearMonth: YearMonth): Map<Int, Int> {
+    val habitsPerDay = mutableMapOf<Int, Int>()
+    val daysInMonth = yearMonth.lengthOfMonth()
+
+    for (day in 1..daysInMonth) {
+        val currentDate = yearMonth.atDay(day)
+        var habitCount = 0
+
+        for (habit in habits) {
+            if (shouldHabitBeActiveOnDate(habit, currentDate)) {
+                habitCount++
+            }
+        }
+
+        if (habitCount > 0) {
+            habitsPerDay[day] = habitCount
+        }
+    }
+
+    return habitsPerDay
+}
+
+/**
+ * Determina si un hábito debe estar activo en una fecha específica
+ */
+fun shouldHabitBeActiveOnDate(habit: Habit, date: LocalDate): Boolean {
+    // Verificar que el hábito esté activo
+    if (!habit.isActive) return false
+
+    // Verificar que la fecha sea después de la creación del hábito
+    val creationDate = habit.createdAt.toLocalDate()
+    if (date.isBefore(creationDate)) return false
+
+    // Verificar la fecha de finalización
+    habit.finishDate?.let { finishDateStr ->
+        try {
+            val finishDate = LocalDate.parse(finishDateStr)
+            if (date.isAfter(finishDate)) return false
+        } catch (e: Exception) {
+            // Si hay error al parsear, ignorar la fecha de finalización
+        }
+    }
+
+    // Verificar la frecuencia
+    return when (habit.frequency) {
+        HabitFrequency.DAILY -> true
+        HabitFrequency.WEEKLY -> {
+            // Para hábitos semanales, solo mostrar en el día de la semana en que se creó
+            val creationDayOfWeek = creationDate.dayOfWeek
+            date.dayOfWeek == creationDayOfWeek
+        }
+        HabitFrequency.MONTHLY -> {
+            // Para hábitos mensuales, solo mostrar en el día del mes en que se creó
+            val creationDayOfMonth = creationDate.dayOfMonth
+            date.dayOfMonth == creationDayOfMonth
         }
     }
 }
