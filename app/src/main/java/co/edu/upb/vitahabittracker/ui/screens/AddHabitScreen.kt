@@ -1,5 +1,6 @@
 package co.edu.upb.vitahabittracker.ui.screens
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -12,6 +13,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -32,7 +34,9 @@ fun AddHabitDialog(
                         description: String,
                         frequency: HabitFrequency,
                         reminderTime: String?,
-                        finishDate: String?) -> Unit,
+                        finishDate: String?,
+                        weekday: Int?,
+                        monthday: Int?) -> Unit,
         initialHabit: co.edu.upb.vitahabittracker.data.models.Habit? = null
 ) {
         var habitName by remember { mutableStateOf(initialHabit?.name ?: "") }
@@ -40,6 +44,8 @@ fun AddHabitDialog(
         var selectedFrequency by remember {
                 mutableStateOf(initialHabit?.frequency ?: HabitFrequency.DAILY)
         }
+        var selectedWeekday by remember { mutableStateOf(initialHabit?.scheduledWeekday ?: 0) }
+        var selectedMonthday by remember { mutableStateOf(initialHabit?.scheduledMonthday ?: 1) }
         var enableReminder by remember { mutableStateOf(initialHabit?.reminderTime != null) }
         var selectedHour by remember { mutableStateOf(9) }
         var selectedMinute by remember { mutableStateOf(0) }
@@ -197,6 +203,26 @@ fun AddHabitDialog(
                                                                         )
                                                         )
                                                 }
+                                        }
+
+                                        // Weekly Day Selector
+                                        if (selectedFrequency == HabitFrequency.WEEKLY) {
+                                                Spacer(modifier = Modifier.height(12.dp))
+                                                WeekdaySelectorRow(
+                                                        selectedWeekday = selectedWeekday,
+                                                        onWeekdaySelected = { selectedWeekday = it }
+                                                )
+                                        }
+
+                                        // Monthly Day Selector
+                                        if (selectedFrequency == HabitFrequency.MONTHLY) {
+                                                Spacer(modifier = Modifier.height(12.dp))
+                                                MonthdaySelector(
+                                                        selectedMonthday = selectedMonthday,
+                                                        onMonthdaySelected = {
+                                                                selectedMonthday = it
+                                                        }
+                                                )
                                         }
                                 }
 
@@ -361,7 +387,19 @@ fun AddHabitDialog(
                                                                         habitDescription,
                                                                         selectedFrequency,
                                                                         reminderTime,
-                                                                        finishDate
+                                                                        finishDate,
+                                                                        if (selectedFrequency ==
+                                                                                        HabitFrequency
+                                                                                                .WEEKLY
+                                                                        )
+                                                                                selectedWeekday
+                                                                        else null,
+                                                                        if (selectedFrequency ==
+                                                                                        HabitFrequency
+                                                                                                .MONTHLY
+                                                                        )
+                                                                                selectedMonthday
+                                                                        else null
                                                                 )
                                                         }
                                                 },
@@ -499,6 +537,155 @@ fun DatePickerDialog(
                                         todayContentColor = BluePrimary,
                                         todayDateBorderColor = BluePrimary
                                 )
+                )
+        }
+}
+
+@Composable
+fun WeekdaySelectorRow(selectedWeekday: Int, onWeekdaySelected: (Int) -> Unit) {
+        val daysOfWeek = listOf("D", "L", "M", "M", "J", "V", "S")
+        val dayNames =
+                listOf("Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado")
+
+        Column {
+                Text(
+                        text = "Selecciona el día",
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
+                        modifier = Modifier.padding(bottom = 8.dp)
+                )
+                Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceEvenly,
+                        verticalAlignment = Alignment.CenterVertically
+                ) {
+                        for (i in 0 until 7) {
+                                Surface(
+                                        modifier =
+                                                Modifier.size(48.dp).clickable {
+                                                        onWeekdaySelected(i)
+                                                },
+                                        shape = androidx.compose.foundation.shape.CircleShape,
+                                        color =
+                                                if (selectedWeekday == i) GreenPrimary
+                                                else BluePrimary.copy(alpha = 0.2f)
+                                ) {
+                                        Box(
+                                                contentAlignment = Alignment.Center,
+                                                modifier = Modifier.fillMaxSize()
+                                        ) {
+                                                Text(
+                                                        text = daysOfWeek[i],
+                                                        fontSize = 16.sp,
+                                                        fontWeight = FontWeight.Bold,
+                                                        color =
+                                                                if (selectedWeekday == i)
+                                                                        Color.White
+                                                                else
+                                                                        MaterialTheme.colorScheme
+                                                                                .onSurface
+                                                )
+                                        }
+                                }
+                        }
+                }
+                Text(
+                        text = dayNames[selectedWeekday],
+                        fontSize = 12.sp,
+                        color = BluePrimary,
+                        modifier = Modifier.padding(top = 8.dp).align(Alignment.CenterHorizontally),
+                        fontWeight = FontWeight.SemiBold
+                )
+        }
+}
+
+@Composable
+fun MonthdaySelector(selectedMonthday: Int, onMonthdaySelected: (Int) -> Unit) {
+        Column {
+                Text(
+                        text = "Selecciona el día del mes",
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
+                        modifier = Modifier.padding(bottom = 8.dp)
+                )
+
+                // Calendar grid 7 columns
+                Column(modifier = Modifier.fillMaxWidth()) {
+                        for (week in 0 until 5) {
+                                Row(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        horizontalArrangement = Arrangement.SpaceBetween
+                                ) {
+                                        for (dayOfWeek in 0 until 7) {
+                                                val dayNumber = week * 7 + dayOfWeek + 1
+                                                if (dayNumber <= 31) {
+                                                        Surface(
+                                                                modifier =
+                                                                        Modifier.size(40.dp)
+                                                                                .clickable {
+                                                                                        onMonthdaySelected(
+                                                                                                dayNumber
+                                                                                        )
+                                                                                },
+                                                                shape =
+                                                                        androidx.compose.foundation
+                                                                                .shape.CircleShape,
+                                                                color =
+                                                                        if (selectedMonthday ==
+                                                                                        dayNumber
+                                                                        )
+                                                                                GreenPrimary
+                                                                        else
+                                                                                BluePrimary.copy(
+                                                                                        alpha = 0.2f
+                                                                                )
+                                                        ) {
+                                                                Box(
+                                                                        contentAlignment =
+                                                                                Alignment.Center,
+                                                                        modifier =
+                                                                                Modifier.fillMaxSize()
+                                                                ) {
+                                                                        Text(
+                                                                                text =
+                                                                                        dayNumber
+                                                                                                .toString(),
+                                                                                fontSize = 12.sp,
+                                                                                fontWeight =
+                                                                                        FontWeight
+                                                                                                .Bold,
+                                                                                color =
+                                                                                        if (selectedMonthday ==
+                                                                                                        dayNumber
+                                                                                        )
+                                                                                                Color.White
+                                                                                        else
+                                                                                                MaterialTheme
+                                                                                                        .colorScheme
+                                                                                                        .onSurface
+                                                                        )
+                                                                }
+                                                        }
+                                                } else {
+                                                        Spacer(modifier = Modifier.size(40.dp))
+                                                }
+                                        }
+                                }
+
+                                if (week < 4) {
+                                        Spacer(modifier = Modifier.height(8.dp))
+                                }
+                        }
+                }
+
+                Text(
+                        text = "Día $selectedMonthday",
+                        fontSize = 12.sp,
+                        color = BluePrimary,
+                        modifier = Modifier.padding(top = 8.dp).align(Alignment.CenterHorizontally),
+                        fontWeight = FontWeight.SemiBold
                 )
         }
 }

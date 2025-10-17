@@ -290,7 +290,9 @@ fun VitaHabitosApp() {
                                         description,
                                         frequency,
                                         reminderTime,
-                                        finishDate ->
+                                        finishDate,
+                                        weekday,
+                                        monthday ->
                                         coroutineScope.launch {
                                                 if (showEditHabitDialog && editingHabit != null) {
                                                         // Update existing habit in Firestore
@@ -300,7 +302,9 @@ fun VitaHabitosApp() {
                                                                         description = description,
                                                                         frequency = frequency,
                                                                         reminderTime = reminderTime,
-                                                                        finishDate = finishDate
+                                                                        finishDate = finishDate,
+                                                                        scheduledWeekday = weekday,
+                                                                        scheduledMonthday = monthday
                                                                 )
                                                         habitRepository?.updateHabit(updatedHabit)
                                                         showEditHabitDialog = false
@@ -327,7 +331,9 @@ fun VitaHabitosApp() {
                                                                         description = description,
                                                                         frequency = frequency,
                                                                         reminderTime = reminderTime,
-                                                                        finishDate = finishDate
+                                                                        finishDate = finishDate,
+                                                                        scheduledWeekday = weekday,
+                                                                        scheduledMonthday = monthday
                                                                 )
                                                         habitRepository?.addHabit(newHabit)
                                                         showAddHabitDialog = false
@@ -372,8 +378,10 @@ fun MainAppScreen(
                         String,
                         co.edu.upb.vitahabittracker.data.models.HabitFrequency,
                         String?,
-                        String?) -> Unit =
-                { _, _, _, _, _ ->
+                        String?,
+                        Int?,
+                        Int?) -> Unit =
+                { _, _, _, _, _, _, _ ->
                 },
         completedHabitsToday: Set<Int> = emptySet()
 ) {
