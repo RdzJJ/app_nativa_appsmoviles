@@ -15,3 +15,10 @@ Permite a los usuarios registrar sus rutinas, consultar estadísticas de progres
   - Visualización del progreso mediante gráficos de barras y circulares.
 - **Perfil de usuario**
   - Consulta de nombre, apellido y correo registrado.
+
+  ## 🧩 Arquitectura general
+
+- **Frontend:** Kotlin (Android)
+- **Backend:** Firebase Authentication y Firebase Realtime Database
+- **Diseño:** Prototipado en Figma 
+- **Integración:** Sincronización en tiempo real entre vistas y datos del usuario
