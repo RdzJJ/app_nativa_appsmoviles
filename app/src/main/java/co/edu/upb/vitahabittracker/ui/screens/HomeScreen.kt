@@ -23,6 +23,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.draw.clip
 import co.edu.upb.vitahabittracker.R
 import co.edu.upb.vitahabittracker.data.models.Habit
 import co.edu.upb.vitahabittracker.data.models.HabitFrequency
@@ -52,6 +53,16 @@ fun HomeScreen(
     
     val habitsForOtherDays = remember(habits) {
         habits.filter { !isHabitScheduledForToday(it) }
+    }
+
+    // Calculate progress for today
+    val todayProgressPercentage = remember(habitsForToday, completedHabitsToday) {
+        if (habitsForToday.isEmpty()) {
+            0
+        } else {
+            val completedCount = habitsForToday.count { completedHabitsToday.contains(it.id) }
+            (completedCount * 100) / habitsForToday.size
+        }
     }
 
     Box(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
@@ -87,6 +98,51 @@ fun HomeScreen(
                         fontSize = 14.sp,
                         color = Color.White.copy(alpha = 0.9f)
                     )
+                }
+            }
+
+            // Progress bar for today's habits
+            if (habitsForToday.isNotEmpty()) {
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 12.dp),
+                    shape = RoundedCornerShape(12.dp),
+                    colors = CardDefaults.cardColors(containerColor = Color.White),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+                ) {
+                    Column(modifier = Modifier.padding(12.dp)) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(bottom = 8.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = "Progreso de hoy",
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.SemiBold,
+                                color = MaterialTheme.colorScheme.onSurface
+                            )
+                            Text(
+                                text = "$todayProgressPercentage%",
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = GreenPrimary
+                            )
+                        }
+                        
+                        LinearProgressIndicator(
+                            progress = todayProgressPercentage / 100f,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(8.dp)
+                                .clip(RoundedCornerShape(4.dp)),
+                            color = GreenPrimary,
+                            trackColor = Color(0xFFE8E8E8)
+                        )
+                    }
                 }
             }
 
