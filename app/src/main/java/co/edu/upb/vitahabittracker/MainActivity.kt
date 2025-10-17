@@ -1,9 +1,14 @@
 package co.edu.upb.vitahabittracker
 
+import android.Manifest
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.consumeWindowInsets
@@ -35,6 +40,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import co.edu.upb.vitahabittracker.data.models.Habit
@@ -59,16 +65,38 @@ import java.time.LocalTime
 import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
-        override fun onCreate(savedInstanceState: Bundle?) {
-                super.onCreate(savedInstanceState)
-                enableEdgeToEdge()
-                setContent { VitaHabitosTheme { VitaHabitosApp() } }
+    private val requestPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted: Boolean ->
+        if (isGranted) {
+            // Permission granted, notifications can be shown
+        } else {
+            // Permission denied, show a message to user
         }
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
+
+        // Request notification permission for Android 13+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.POST_NOTIFICATIONS
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+            }
+        }
+
+        setContent { VitaHabitosTheme { VitaHabitosApp() } }
+    }
 }
 
 @Composable
 fun VitaHabitosApp() {
-        val context = androidx.compose.ui.platform.LocalContext.current
+        val context = LocalContext.current
         val sessionManager = remember { SessionManager(context) }
         val notificationScheduler = remember { NotificationScheduler(context) }
 
