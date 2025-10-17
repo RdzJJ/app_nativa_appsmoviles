@@ -9,6 +9,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -16,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
@@ -44,6 +46,7 @@ fun ProfileScreen(
 ) {
         val displayUser = user ?: User(name = "Usuario", email = "usuario@email.com")
         var showEditDialog by remember { mutableStateOf(false) }
+        var showCreditsDialog by remember { mutableStateOf(false) }
         var errorMessage by remember { mutableStateOf("") }
         var successMessage by remember { mutableStateOf("") }
         val coroutineScope = rememberCoroutineScope()
@@ -88,6 +91,12 @@ fun ProfileScreen(
                                         }
                                 }
                         }
+                )
+        }
+
+        if (showCreditsDialog) {
+                CreditsDialog(
+                        onDismiss = { showCreditsDialog = false }
                 )
         }
 
@@ -199,6 +208,26 @@ fun ProfileScreen(
                                 modifier = Modifier.padding(end = 8.dp)
                         )
                         Text("Editar Perfil", fontWeight = FontWeight.Bold)
+                }
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                // Credits Button
+                Button(
+                        onClick = { showCreditsDialog = true },
+                        modifier = Modifier.fillMaxWidth().height(56.dp),
+                        colors =
+                                ButtonDefaults.buttonColors(
+                                        containerColor = BluePrimary
+                                ),
+                        shape = RoundedCornerShape(12.dp)
+                ) {
+                        Icon(
+                                Icons.Filled.Info,
+                                contentDescription = null,
+                                modifier = Modifier.padding(end = 8.dp)
+                        )
+                        Text("Créditos", fontWeight = FontWeight.Bold)
                 }
 
                 Spacer(modifier = Modifier.height(12.dp))
@@ -540,4 +569,99 @@ fun calculateCompletionPercentage(habits: List<Habit>, entries: List<HabitEntry>
     return if (expectedCompletions > 0) {
         ((actualCompletions.toFloat() / expectedCompletions) * 100).toInt().coerceIn(0, 100)
     } else 0
+}
+
+@Composable
+fun CreditsDialog(
+    onDismiss: () -> Unit
+) {
+    Dialog(
+        onDismissRequest = onDismiss,
+        properties = DialogProperties(
+            usePlatformDefaultWidth = false,
+            dismissOnBackPress = true,
+            dismissOnClickOutside = true
+        )
+    ) {
+        Card(
+            modifier = Modifier.fillMaxWidth(0.9f).padding(16.dp),
+            shape = RoundedCornerShape(20.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surface
+            )
+        ) {
+            Column(
+                modifier = Modifier.fillMaxWidth().padding(24.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                // Header with icon
+                Icon(
+                    Icons.Filled.Info,
+                    contentDescription = null,
+                    modifier = Modifier.size(48.dp).padding(bottom = 16.dp),
+                    tint = BluePrimary
+                )
+                
+                Text(
+                    text = "Créditos",
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    modifier = Modifier.padding(bottom = 16.dp)
+                )
+                
+                Text(
+                    text = "Desarrollado por:",
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Medium,
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
+                    modifier = Modifier.padding(bottom = 12.dp)
+                )
+                
+                // Credits list
+                val developers = listOf(
+                    "Samuel Perez",
+                    "Gregorio Carvajal",
+                    "Julian Rodriguez"
+                )
+                
+                developers.forEach { developer ->
+                    Card(
+                        modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
+                        shape = RoundedCornerShape(12.dp),
+                        colors = CardDefaults.cardColors(
+                            containerColor = GreenPrimary.copy(alpha = 0.1f)
+                        )
+                    ) {
+                        Text(
+                            text = developer,
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Medium,
+                            color = MaterialTheme.colorScheme.onSurface,
+                            modifier = Modifier.fillMaxWidth().padding(16.dp),
+                            textAlign = TextAlign.Center
+                        )
+                    }
+                }
+                
+                Spacer(modifier = Modifier.height(24.dp))
+                
+                // Close button
+                Button(
+                    onClick = onDismiss,
+                    modifier = Modifier.fillMaxWidth().height(48.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = BluePrimary
+                    ),
+                    shape = RoundedCornerShape(12.dp)
+                ) {
+                    Text(
+                        "Cerrar",
+                        fontWeight = FontWeight.Bold,
+                        color = Color.White
+                    )
+                }
+            }
+        }
+    }
 }
