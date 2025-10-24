@@ -86,7 +86,7 @@ fun StatisticsScreen(
             Text(
                 text = "Estadísticas",
                 modifier = Modifier.align(Alignment.Center),
-                fontSize = 28.sp,
+                fontSize = 32.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color.White
             )

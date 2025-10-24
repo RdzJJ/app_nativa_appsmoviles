@@ -152,7 +152,7 @@ fun ProfileScreen(
 
                                 Text(
                                         text = displayUser.name,
-                                        fontSize = 20.sp,
+                                        fontSize = 24.sp,
                                         fontWeight = FontWeight.Bold,
                                         color = MaterialTheme.colorScheme.onPrimary
                                 )
