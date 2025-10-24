@@ -17,6 +17,11 @@ val TealLight = Color(0xFF80DEEA)
 val TealPrimary = Color(0xFF00BCD4)
 val TealDark = Color(0xFF0097A7)
 
+// Coral/Orange Colors
+val CoralLight = Color(0xFFFFB74D)
+val CoralPrimary = Color(0xFFFF7043) // Naranja coral vibrante
+val CoralDark = Color(0xFFE64A19)
+
 // Neutral
 val Gray100 = Color(0xFFF5F5F5)
 val Gray500 = Color(0xFFBDBDBD)
