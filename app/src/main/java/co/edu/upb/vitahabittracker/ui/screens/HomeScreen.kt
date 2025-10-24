@@ -89,7 +89,7 @@ fun HomeScreen(
                 Column {
                     Text(
                         text = stringResource(R.string.home_title),
-                        fontSize = 30.sp,
+                        fontSize = 36.sp,
                         fontWeight = FontWeight.Bold,
                         color = Color.White
                     )
