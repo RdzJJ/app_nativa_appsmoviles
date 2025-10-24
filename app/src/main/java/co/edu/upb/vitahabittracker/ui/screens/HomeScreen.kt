@@ -29,6 +29,7 @@ import co.edu.upb.vitahabittracker.data.models.Habit
 import co.edu.upb.vitahabittracker.data.models.HabitFrequency
 import co.edu.upb.vitahabittracker.ui.theme.BluePrimary
 import co.edu.upb.vitahabittracker.ui.theme.GreenPrimary
+import co.edu.upb.vitahabittracker.ui.theme.CoralPrimary
 import java.time.LocalDate
 import java.time.DayOfWeek
 import androidx.compose.foundation.clickable
@@ -253,7 +254,7 @@ fun HomeScreen(
         FloatingActionButton(
             onClick = onAddHabitClick,
             modifier = Modifier.align(Alignment.BottomEnd).padding(16.dp),
-            containerColor = GreenPrimary,
+            containerColor = CoralPrimary,
             contentColor = Color.White
         ) { Icon(Icons.Filled.Add, contentDescription = stringResource(R.string.add_habit)) }
     }
