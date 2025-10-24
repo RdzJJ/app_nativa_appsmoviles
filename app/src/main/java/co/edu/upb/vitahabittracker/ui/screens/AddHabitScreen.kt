@@ -36,7 +36,9 @@ fun AddHabitDialog(
                         reminderTime: String?,
                         finishDate: String?,
                         weekday: Int?,
-                        monthday: Int?) -> Unit,
+                        monthday: Int?,
+                        weeklyGoal: Int,
+                        monthlyGoal: Int?) -> Unit,
         initialHabit: co.edu.upb.vitahabittracker.data.models.Habit? = null,
         isEditing: Boolean = false
 ) {
@@ -47,6 +49,8 @@ fun AddHabitDialog(
         }
         var selectedWeekday by remember { mutableStateOf(initialHabit?.scheduledWeekday ?: 0) }
         var selectedMonthday by remember { mutableStateOf(initialHabit?.scheduledMonthday ?: 1) }
+        var weeklyGoal by remember { mutableStateOf((initialHabit?.weeklyGoal ?: 7).toString()) }
+        var monthlyGoal by remember { mutableStateOf(initialHabit?.monthlyGoal?.toString() ?: "") }
         var enableReminder by remember { mutableStateOf(initialHabit?.reminderTime != null) }
         var selectedHour by remember { mutableStateOf(9) }
         var selectedMinute by remember { mutableStateOf(0) }
@@ -230,6 +234,75 @@ fun AddHabitDialog(
                                         }
                                 }
 
+                                // Goal Settings Section
+                                Text(
+                                        text = "Metas de cumplimiento",
+                                        fontSize = 14.sp,
+                                        fontWeight = FontWeight.SemiBold,
+                                        color = MaterialTheme.colorScheme.onSurface,
+                                        modifier = Modifier.padding(bottom = 12.dp)
+                                )
+
+                                // Weekly Goal Field
+                                OutlinedTextField(
+                                        value = weeklyGoal,
+                                        onValueChange = { 
+                                                if (it.isEmpty() || it.all { char -> char.isDigit() }) {
+                                                        weeklyGoal = it
+                                                }
+                                        },
+                                        label = { Text("Meta semanal (veces por semana)") },
+                                        modifier = Modifier.fillMaxWidth().padding(bottom = 12.dp),
+                                        shape = RoundedCornerShape(12.dp),
+                                        singleLine = true,
+                                        keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(
+                                                keyboardType = androidx.compose.ui.text.input.KeyboardType.Number
+                                        ),
+                                        colors =
+                                                OutlinedTextFieldDefaults.colors(
+                                                        focusedBorderColor = BluePrimary,
+                                                        unfocusedBorderColor =
+                                                                BluePrimary.copy(alpha = 0.3f)
+                                                ),
+                                        supportingText = { 
+                                                Text(
+                                                        "Ej: 7 para todos los días, 3 para tres veces por semana",
+                                                        fontSize = 11.sp,
+                                                        color = Color.Gray
+                                                )
+                                        }
+                                )
+
+                                // Monthly Goal Field (Optional)
+                                OutlinedTextField(
+                                        value = monthlyGoal,
+                                        onValueChange = { 
+                                                if (it.isEmpty() || it.all { char -> char.isDigit() }) {
+                                                        monthlyGoal = it
+                                                }
+                                        },
+                                        label = { Text("Meta mensual (opcional)") },
+                                        modifier = Modifier.fillMaxWidth().padding(bottom = 24.dp),
+                                        shape = RoundedCornerShape(12.dp),
+                                        singleLine = true,
+                                        keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(
+                                                keyboardType = androidx.compose.ui.text.input.KeyboardType.Number
+                                        ),
+                                        colors =
+                                                OutlinedTextFieldDefaults.colors(
+                                                        focusedBorderColor = BluePrimary,
+                                                        unfocusedBorderColor =
+                                                                BluePrimary.copy(alpha = 0.3f)
+                                                ),
+                                        supportingText = { 
+                                                Text(
+                                                        "Deja vacío si no necesitas meta mensual",
+                                                        fontSize = 11.sp,
+                                                        color = Color.Gray
+                                                )
+                                        }
+                                )
+
                                 // Reminder Section
                                 Row(
                                         modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp),
@@ -390,6 +463,10 @@ fun AddHabitDialog(
                                                                                 selectedFinishDate
                                                                                         ?.toString()
                                                                         } else null
+                                                                val parsedWeeklyGoal = weeklyGoal.toIntOrNull() ?: 7
+                                                                val parsedMonthlyGoal = if (monthlyGoal.isNotBlank()) {
+                                                                        monthlyGoal.toIntOrNull()
+                                                                } else null
                                                                 onSave(
                                                                         habitName,
                                                                         habitDescription,
@@ -407,7 +484,9 @@ fun AddHabitDialog(
                                                                                                 .MONTHLY
                                                                         )
                                                                                 selectedMonthday
-                                                                        else null
+                                                                        else null,
+                                                                        parsedWeeklyGoal,
+                                                                        parsedMonthlyGoal
                                                                 )
                                                         }
                                                 },

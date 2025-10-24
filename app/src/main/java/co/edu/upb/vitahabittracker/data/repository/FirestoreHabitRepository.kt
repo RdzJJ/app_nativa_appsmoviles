@@ -51,7 +51,9 @@ class FirestoreHabitRepository(private val userId: String) {
                                             scheduledWeekday =
                                                     doc.getLong("scheduledWeekday")?.toInt(),
                                             scheduledMonthday =
-                                                    doc.getLong("scheduledMonthday")?.toInt()
+                                                    doc.getLong("scheduledMonthday")?.toInt(),
+                                            weeklyGoal = doc.getLong("weeklyGoal")?.toInt() ?: 7,
+                                            monthlyGoal = doc.getLong("monthlyGoal")?.toInt()
                                     )
                                 } catch (e: Exception) {
                                     null
@@ -87,7 +89,9 @@ class FirestoreHabitRepository(private val userId: String) {
                             reminderTime = doc.getString("reminderTime"),
                             finishDate = doc.getString("finishDate"),
                             scheduledWeekday = doc.getLong("scheduledWeekday")?.toInt(),
-                            scheduledMonthday = doc.getLong("scheduledMonthday")?.toInt()
+                            scheduledMonthday = doc.getLong("scheduledMonthday")?.toInt(),
+                            weeklyGoal = doc.getLong("weeklyGoal")?.toInt() ?: 7,
+                            monthlyGoal = doc.getLong("monthlyGoal")?.toInt()
                     )
                 } catch (e: Exception) {
                     null
@@ -112,7 +116,9 @@ class FirestoreHabitRepository(private val userId: String) {
                             "reminderTime" to habit.reminderTime,
                             "finishDate" to habit.finishDate,
                             "scheduledWeekday" to habit.scheduledWeekday,
-                            "scheduledMonthday" to habit.scheduledMonthday
+                            "scheduledMonthday" to habit.scheduledMonthday,
+                            "weeklyGoal" to habit.weeklyGoal,
+                            "monthlyGoal" to habit.monthlyGoal
                     )
 
             val docRef = habitsCollection.document(habit.id.toString())
@@ -138,7 +144,9 @@ class FirestoreHabitRepository(private val userId: String) {
                             "reminderTime" to habit.reminderTime,
                             "finishDate" to habit.finishDate,
                             "scheduledWeekday" to habit.scheduledWeekday,
-                            "scheduledMonthday" to habit.scheduledMonthday
+                            "scheduledMonthday" to habit.scheduledMonthday,
+                            "weeklyGoal" to habit.weeklyGoal,
+                            "monthlyGoal" to habit.monthlyGoal
                     )
 
             habitsCollection

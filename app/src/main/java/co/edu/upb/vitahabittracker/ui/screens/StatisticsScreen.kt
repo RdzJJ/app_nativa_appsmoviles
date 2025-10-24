@@ -189,6 +189,7 @@ fun StatisticsScreen(
                         val habitStats = calculateHabitStats(habit, habitEntries)
                         HabitProgressItem(
                             habit = habit,
+                            habitEntries = habitEntries,
                             completionCount = habitStats.completionCount,
                             currentStreak = habitStats.streak
                         )
@@ -457,35 +458,152 @@ fun HabitItemInDialog(
 @Composable
 fun HabitProgressItem(
     habit: Habit,
+    habitEntries: List<HabitEntry>,
     completionCount: Int,
     currentStreak: Int
 ) {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Column(modifier = Modifier.weight(1f)) {
+    // Calculate weekly and monthly completions
+    val weeklyCompletions = calculateWeeklyCompletions(habit, habitEntries)
+    val monthlyCompletions = calculateMonthlyCompletions(habit, habitEntries)
+    
+    // Determine which goal to show (prefer weekly if both exist)
+    val showWeeklyProgress = habit.weeklyGoal > 0
+    val showMonthlyProgress = habit.monthlyGoal != null && habit.monthlyGoal > 0
+    
+    Column(modifier = Modifier.fillMaxWidth()) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = habit.name,
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    color = Color(0xFF222222)
+                )
+                Text(
+                    text = "Completado $completionCount veces",
+                    fontSize = 12.sp,
+                    color = Color(0xFF666666),
+                    modifier = Modifier.padding(top = 4.dp)
+                )
+            }
+
             Text(
-                text = habit.name,
+                text = "$currentStreak días",
                 fontSize = 14.sp,
-                fontWeight = FontWeight.SemiBold,
-                color = Color(0xFF222222)
+                fontWeight = FontWeight.Bold,
+                color = BluePrimary
             )
+        }
+        
+        // Weekly Progress Bar
+        if (showWeeklyProgress) {
+            Spacer(modifier = Modifier.height(12.dp))
+            
+            val weeklyGoal = habit.weeklyGoal
+            val progressPercent = if (weeklyGoal > 0) {
+                minOf(100, (weeklyCompletions * 100) / weeklyGoal)
+            } else 0
+            
+            val progressColor = when {
+                progressPercent < 50 -> Color(0xFFF44336) // Red
+                progressPercent < 80 -> Color(0xFFFFA726) // Orange
+                else -> GreenPrimary // Green
+            }
+            
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "Esta semana",
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Medium,
+                    color = Color(0xFF555555)
+                )
+                Text(
+                    text = "$weeklyCompletions/$weeklyGoal",
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = progressColor
+                )
+            }
+            
+            Spacer(modifier = Modifier.height(6.dp))
+            
+            LinearProgressIndicator(
+                progress = { progressPercent / 100f },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(8.dp),
+                color = progressColor,
+                trackColor = Color(0xFFE0E0E0),
+            )
+            
             Text(
-                text = "Completado $completionCount veces",
-                fontSize = 12.sp,
-                color = Color(0xFF666666),
+                text = "completado esta semana",
+                fontSize = 11.sp,
+                color = Color.Gray,
                 modifier = Modifier.padding(top = 4.dp)
             )
         }
-
-        Text(
-            text = "$currentStreak días",
-            fontSize = 14.sp,
-            fontWeight = FontWeight.Bold,
-            color = BluePrimary
-        )
+        
+        // Monthly Progress Bar
+        if (showMonthlyProgress) {
+            Spacer(modifier = Modifier.height(12.dp))
+            
+            val monthlyGoal = habit.monthlyGoal ?: 0
+            val progressPercent = if (monthlyGoal > 0) {
+                minOf(100, (monthlyCompletions * 100) / monthlyGoal)
+            } else 0
+            
+            val progressColor = when {
+                progressPercent < 50 -> Color(0xFFF44336) // Red
+                progressPercent < 80 -> Color(0xFFFFA726) // Orange
+                else -> GreenPrimary // Green
+            }
+            
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "Este mes",
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Medium,
+                    color = Color(0xFF555555)
+                )
+                Text(
+                    text = "$monthlyCompletions/$monthlyGoal",
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = progressColor
+                )
+            }
+            
+            Spacer(modifier = Modifier.height(6.dp))
+            
+            LinearProgressIndicator(
+                progress = { progressPercent / 100f },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(8.dp),
+                color = progressColor,
+                trackColor = Color(0xFFE0E0E0),
+            )
+            
+            Text(
+                text = "completado este mes",
+                fontSize = 11.sp,
+                color = Color.Gray,
+                modifier = Modifier.padding(top = 4.dp)
+            )
+        }
     }
 }
 
@@ -855,4 +973,43 @@ fun calculateHabitStreak(entries: List<HabitEntry>): Int {
     }
 
     return streak
+}
+
+/**
+ * Calculate weekly completions for a habit
+ * Returns the number of times a habit was completed in the current week
+ */
+fun calculateWeeklyCompletions(
+    habit: Habit,
+    entries: List<HabitEntry>
+): Int {
+    val today = LocalDate.now()
+    // Week starts on Monday (dayOfWeek.value = 1)
+    val weekStart = today.minusDays(today.dayOfWeek.value.toLong() - 1)
+    val weekEnd = weekStart.plusDays(6)
+    
+    return entries.filter { entry ->
+        entry.habitId == habit.id &&
+        entry.completedDate >= weekStart &&
+        entry.completedDate <= weekEnd
+    }.size
+}
+
+/**
+ * Calculate monthly completions for a habit
+ * Returns the number of times a habit was completed in the current month
+ */
+fun calculateMonthlyCompletions(
+    habit: Habit,
+    entries: List<HabitEntry>
+): Int {
+    val today = LocalDate.now()
+    val monthStart = today.withDayOfMonth(1)
+    val monthEnd = today.withDayOfMonth(today.lengthOfMonth())
+    
+    return entries.filter { entry ->
+        entry.habitId == habit.id &&
+        entry.completedDate >= monthStart &&
+        entry.completedDate <= monthEnd
+    }.size
 }
