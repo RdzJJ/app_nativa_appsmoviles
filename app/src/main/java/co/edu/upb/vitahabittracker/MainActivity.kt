@@ -325,7 +325,9 @@ fun VitaHabitosApp() {
                                         reminderTime,
                                         finishDate,
                                         weekday,
-                                        monthday ->
+                                        monthday,
+                                        weeklyGoal,
+                                        monthlyGoal ->
                                         if (!isProcessingHabit) {
                                                 isProcessingHabit = true
                                                 coroutineScope.launch {
@@ -347,7 +349,11 @@ fun VitaHabitosApp() {
                                                                                         scheduledWeekday =
                                                                                                 weekday,
                                                                                         scheduledMonthday =
-                                                                                                monthday
+                                                                                                monthday,
+                                                                                        weeklyGoal =
+                                                                                                weeklyGoal,
+                                                                                        monthlyGoal =
+                                                                                                monthlyGoal
                                                                                 )
                                                                         habitRepository
                                                                                 ?.updateHabit(
@@ -390,7 +396,11 @@ fun VitaHabitosApp() {
                                                                                         scheduledWeekday =
                                                                                                 weekday,
                                                                                         scheduledMonthday =
-                                                                                                monthday
+                                                                                                monthday,
+                                                                                        weeklyGoal =
+                                                                                                weeklyGoal,
+                                                                                        monthlyGoal =
+                                                                                                monthlyGoal
                                                                                 )
                                                                         habitRepository?.addHabit(
                                                                                 newHabit
@@ -444,8 +454,10 @@ fun MainAppScreen(
                         String?,
                         String?,
                         Int?,
+                        Int?,
+                        Int,
                         Int?) -> Unit =
-                { _, _, _, _, _, _, _ ->
+                { _, _, _, _, _, _, _, _, _ ->
                 },
         completedHabitsToday: Set<Int> = emptySet(),
         authRepository: AuthRepository,

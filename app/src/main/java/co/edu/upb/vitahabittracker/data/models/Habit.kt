@@ -17,7 +17,9 @@ data class Habit(
         val reminderTime: String? = null, // HH:mm format
         val finishDate: String? = null, // yyyy-MM-dd format
         val scheduledWeekday: Int? = null, // 0=Monday, 1=Tuesday, ..., 6=Sunday (for WEEKLY)
-        val scheduledMonthday: Int? = null // 1-31 (for MONTHLY)
+        val scheduledMonthday: Int? = null, // 1-31 (for MONTHLY)
+        val weeklyGoal: Int = 7, // Weekly goal (default 7 times per week for daily habits)
+        val monthlyGoal: Int? = null // Optional monthly goal
 )
 
 enum class HabitFrequency {
