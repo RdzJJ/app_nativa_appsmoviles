@@ -316,7 +316,7 @@ fun HabitCard(
     Card(
         modifier =
             Modifier.fillMaxWidth()
-                .padding(bottom = 12.dp)
+                .padding(bottom = 16.dp)
                 .alpha(if (isCompletedToday) 0.6f else 1f),
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(containerColor = Color(0xFFE8E8E8))
@@ -328,7 +328,7 @@ fun HabitCard(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Column(modifier = Modifier.weight(1f).padding(end = 12.dp)) {
+            Column(modifier = Modifier.weight(1f).padding(end = 16.dp)) {
                 Text(
                     text = habit.name,
                     fontSize = 18.sp,
