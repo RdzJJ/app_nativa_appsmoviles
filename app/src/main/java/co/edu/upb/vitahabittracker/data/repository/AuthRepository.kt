@@ -5,37 +5,17 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
-import java.util.regex.Pattern
 
 class AuthRepository {
     private val auth = FirebaseAuth.getInstance()
     private val firestore = FirebaseFirestore.getInstance()
-    
-    companion object {
-        // RFC 5322 compliant email regex pattern
-        private const val EMAIL_PATTERN = "^[A-Za-z0-9+_.-]+@([A-Za-z0-9.-]+\\.[A-Za-z]{2,})$"
-        
-        /**
-         * Validates an email address format using regex pattern
-         * @param email The email address to validate
-         * @return true if the email is valid, false otherwise
-         */
-        fun isValidEmail(email: String): Boolean {
-            if (email.isBlank()) return false
-            
-            val pattern = Pattern.compile(EMAIL_PATTERN)
-            val matcher = pattern.matcher(email)
-            
-            return matcher.matches()
-        }
-    }
 
     suspend fun login(email: String, password: String): Result<User> {
         return try {
             if (email.isEmpty() || password.isEmpty()) {
                 return Result.failure(Exception("El correo y la contraseña son obligatorios"))
             }
-            if (!isValidEmail(email)) {
+            if (!email.contains("@")) {
                 return Result.failure(Exception("Formato de correo inválido"))
             }
             if (password.length < 6) {
@@ -103,7 +83,7 @@ class AuthRepository {
             if (email.isEmpty() || password.isEmpty() || name.isEmpty()) {
                 return Result.failure(Exception("Todos los campos son obligatorios"))
             }
-            if (!isValidEmail(email)) {
+            if (!email.contains("@")) {
                 return Result.failure(Exception("Formato de correo inválido"))
             }
             if (password.length < 6) {
