@@ -104,22 +104,25 @@ class FirestoreHabitRepository(private val userId: String) {
 
     suspend fun addHabit(habit: Habit): Result<Habit> {
         return try {
-            val habitData =
-                    hashMapOf(
-                            "name" to habit.name,
-                            "description" to habit.description,
-                            "frequency" to habit.frequency.name,
-                            "color" to habit.color,
-                            "icon" to habit.icon,
-                            "createdAt" to habit.createdAt.toString(),
-                            "isActive" to habit.isActive,
-                            "reminderTime" to habit.reminderTime,
-                            "finishDate" to habit.finishDate,
-                            "scheduledWeekday" to habit.scheduledWeekday,
-                            "scheduledMonthday" to habit.scheduledMonthday,
-                            "weeklyGoal" to habit.weeklyGoal,
-                            "monthlyGoal" to habit.monthlyGoal
-                    )
+            // Build a safe map with only non-null values
+            val habitData = mutableMapOf<String, Any>().apply {
+                put("name", habit.name)
+                put("description", habit.description)
+                put("frequency", habit.frequency.name)
+                put("color", habit.color)
+                put("icon", habit.icon)
+                put("createdAt", habit.createdAt.toString())
+                put("isActive", habit.isActive)
+                
+                habit.reminderTime?.let { put("reminderTime", it) }
+                habit.finishDate?.let { put("finishDate", it) }
+                habit.scheduledWeekday?.let { put("scheduledWeekday", it) }
+                habit.scheduledMonthday?.let { put("scheduledMonthday", it) }
+                
+                put("weeklyGoal", habit.weeklyGoal)
+                
+                habit.monthlyGoal?.let { put("monthlyGoal", it) }
+            }
 
             val docRef = habitsCollection.document(habit.id.toString())
             docRef.set(habitData).await()
@@ -130,28 +133,30 @@ class FirestoreHabitRepository(private val userId: String) {
         }
     }
 
-    @Suppress("UNCHECKED_CAST")
     suspend fun updateHabit(habit: Habit): Result<Habit> {
         return try {
-            val habitData =
-                    hashMapOf(
-                            "name" to habit.name,
-                            "description" to habit.description,
-                            "frequency" to habit.frequency.name,
-                            "color" to habit.color,
-                            "icon" to habit.icon,
-                            "isActive" to habit.isActive,
-                            "reminderTime" to habit.reminderTime,
-                            "finishDate" to habit.finishDate,
-                            "scheduledWeekday" to habit.scheduledWeekday,
-                            "scheduledMonthday" to habit.scheduledMonthday,
-                            "weeklyGoal" to habit.weeklyGoal,
-                            "monthlyGoal" to habit.monthlyGoal
-                    )
+            // Build a safe map with only non-null values
+            val habitData = mutableMapOf<String, Any>().apply {
+                put("name", habit.name)
+                put("description", habit.description)
+                put("frequency", habit.frequency.name)
+                put("color", habit.color)
+                put("icon", habit.icon)
+                put("isActive", habit.isActive)
+                
+                habit.reminderTime?.let { put("reminderTime", it) }
+                habit.finishDate?.let { put("finishDate", it) }
+                habit.scheduledWeekday?.let { put("scheduledWeekday", it) }
+                habit.scheduledMonthday?.let { put("scheduledMonthday", it) }
+                
+                put("weeklyGoal", habit.weeklyGoal)
+                
+                habit.monthlyGoal?.let { put("monthlyGoal", it) }
+            }
 
             habitsCollection
                     .document(habit.id.toString())
-                    .update(habitData as Map<String, Any>)
+                    .update(habitData)
                     .await()
             Result.success(habit)
         } catch (e: Exception) {
